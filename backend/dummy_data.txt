@@ -1,0 +1,70 @@
+-- USERS
+INSERT INTO users (user_id, email, name, password, role, created_at) VALUES 
+(1, 'admin@college.edu', 'Admin User', 'password123', 'ADMIN', NOW()),
+(2, 'faculty1@college.edu', 'Dr. Smith', 'password123', 'FACULTY', NOW()),
+(3, 'student1@college.edu', 'John Doe', 'password123', 'STUDENT', NOW()),
+(4, 'hod@college.edu', 'Dr. HOD', 'password123', 'HOD', NOW());
+
+-- RESOURCE TYPES
+INSERT INTO resource_types (resource_type_id, type_name) VALUES 
+(1, 'Classroom'),
+(2, 'Laboratory'),
+(3, 'Auditorium'),
+(4, 'Meeting Room');
+
+-- BUILDINGS
+INSERT INTO buildings (building_id, building_name, building_number, total_floors) VALUES 
+(1, 'Engineering Block', 'B1', 5),
+(2, 'Science Block', 'B2', 4),
+(3, 'Admin Block', 'B3', 3);
+
+-- RESOURCES
+-- (resource_id, description, floor_number, resource_name, building_id, resource_type_id)
+INSERT INTO resources (resource_id, description, floor_number, resource_name, building_id, resource_type_id) VALUES 
+(1, 'Standard Classroom with capacity 60', 1, 'Classroom 101', 1, 1),
+(2, 'Advanced Computer Lab', 2, 'Computer Lab A', 1, 2),
+(3, 'Main College Auditorium', 1, 'Auditorium Hall', 3, 3),
+(4, 'Conference Room for Staff', 2, 'Meeting Room 202', 3, 4),
+(5, 'Physics Lab', 1, 'Physics Lab 1', 2, 2);
+
+-- FACILITIES
+INSERT INTO facility (facility_id, details, facility_name, resource_id) VALUES 
+(1, 'High Definition Projector', 'Projector', 1),
+(2, 'Large Whiteboard', 'Whiteboard', 1),
+(3, 'High Speed WiFi', 'WiFi', 2),
+(4, 'Surround Sound System', 'Audio System', 3);
+
+-- CUPBOARDS
+INSERT INTO cupboards (cupboard_id, cupboard_name, total_shelves, resource_id) VALUES 
+(1, 'Lab Storage A', 3, 2),
+(2, 'Chemical Storage', 4, 5);
+
+-- SHELVES
+INSERT INTO shelves (shelf_id, capacity, description, shelf_number, cupboard_id) VALUES 
+(1, 10, 'Hardware Components', 1, 1),
+(2, 15, 'Cables and Wires', 2, 1),
+(3, 20, 'Manuals', 3, 1),
+(4, 50, 'Glassware', 1, 2);
+
+-- BOOKINGS
+-- (booking_id, created_at, end_datetime, start_datetime, status, approver_id, resource_id, user_id)
+INSERT INTO bookings (booking_id, created_at, end_datetime, start_datetime, status, approver_id, resource_id, user_id) VALUES 
+(1, NOW(), '2023-11-15 12:00:00', '2023-11-15 10:00:00', 'APPROVED', 4, 1, 2),
+(2, NOW(), '2023-11-16 16:00:00', '2023-11-16 14:00:00', 'PENDING', NULL, 2, 3),
+(3, NOW(), '2023-11-17 11:00:00', '2023-11-17 09:00:00', 'REJECTED', 4, 3, 2);
+
+-- MAINTENANCE
+INSERT INTO maintenance (maintenance_id, maintenance_type, notes, scheduled_date, status, resource_id) VALUES 
+(1, 'Electrical Repair', 'Fixing switchboard', '2023-11-20', 'SCHEDULED', 1),
+(2, 'Cleaning', 'Deep cleaning after event', '2023-11-21', 'COMPLETED', 3);
+
+-- Reset Sequences (Optional, if needed for Postgres to sync IDs)
+SELECT setval('users_user_id_seq', (SELECT MAX(user_id) FROM users));
+SELECT setval('resource_types_resource_type_id_seq', (SELECT MAX(resource_type_id) FROM resource_types));
+SELECT setval('buildings_building_id_seq', (SELECT MAX(building_id) FROM buildings));
+SELECT setval('resources_resource_id_seq', (SELECT MAX(resource_id) FROM resources));
+SELECT setval('facility_facility_id_seq', (SELECT MAX(facility_id) FROM facility));
+SELECT setval('cupboards_cupboard_id_seq', (SELECT MAX(cupboard_id) FROM cupboards));
+SELECT setval('shelves_shelf_id_seq', (SELECT MAX(shelf_id) FROM shelves));
+SELECT setval('bookings_booking_id_seq', (SELECT MAX(booking_id) FROM bookings));
+SELECT setval('maintenance_maintenance_id_seq', (SELECT MAX(maintenance_id) FROM maintenance));

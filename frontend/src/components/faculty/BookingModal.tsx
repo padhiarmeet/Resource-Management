@@ -2,7 +2,27 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Building as BuildingIcon, Layers, ChevronRight, CheckCircle2, CalendarClock, MapPin, ArrowRight } from 'lucide-react';
-import { fetchBuildings, fetchResourceTypes, submitBooking, Building, ResourceType } from '@/lib/mockApi';
+import { fetchBuildings, fetchResourceTypes, submitBooking } from '@/lib/api';
+import { fetchResources } from '@/lib/api';
+
+interface Building {
+    building_id: number;
+    building_name: string;
+    building_number: string;
+    total_floors: number;
+}
+
+interface ResourceType {
+    resource_type_id: number;
+    type_name: string;
+}
+
+interface Resource {
+    resource_id: number;
+    resource_name: string;
+    building?: { building_id: number };
+    resourceType?: { resource_type_id: number };
+}
 
 interface BookingModalProps {
     isOpen: boolean;
@@ -19,6 +39,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
     const [step, setStep] = useState<1 | 2>(1);
     const [buildings, setBuildings] = useState<Building[]>([]);
     const [resourceTypes, setResourceTypes] = useState<ResourceType[]>([]);
+    const [resources, setResources] = useState<Resource[]>([]);
     const [selectedBuilding, setSelectedBuilding] = useState<Building | null>(null);
     const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
@@ -36,11 +57,16 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
     const loadData = async () => {
         setLoading(true);
         try {
-            const [bData, rData] = await Promise.all([fetchBuildings(), fetchResourceTypes()]);
+            const [bData, rData, resData] = await Promise.all([
+                fetchBuildings(),
+                fetchResourceTypes(),
+                fetchResources(),
+            ]);
             setBuildings(bData);
             setResourceTypes(rData);
+            setResources(resData);
         } catch (error) {
-            console.error("Failed to load generic data", error);
+            console.error("Failed to load data", error);
         } finally {
             setLoading(false);
         }
@@ -51,28 +77,38 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
         setStep(2);
     };
 
-    const handleResourceSelect = async (resourceType: ResourceType) => {
+    const handleResourceTypeSelect = async (resourceType: ResourceType) => {
         if (!slot || !selectedBuilding) return;
 
+        // Find a resource matching this building + resource type
+        const matchingResource = resources.find(r =>
+            r.building?.building_id === selectedBuilding.building_id &&
+            r.resourceType?.resource_type_id === resourceType.resource_type_id
+        );
+
+        if (!matchingResource) {
+            alert(`No ${resourceType.type_name} found in ${selectedBuilding.building_name}. Please select a different combination.`);
+            return;
+        }
+
         setSubmitting(true);
-        // Construct ISO datetimes for backend (mock)
         const startDatetime = `${slot.date}T${slot.startTime}:00`;
         const endDatetime = `${slot.date}T${slot.endTime}:00`;
 
         try {
             await submitBooking({
-                building_id: selectedBuilding.building_id,
-                resource_type_id: resourceType.resource_type_id,
+                user_id: 1, // Hardcoded for now (current logged-in user)
+                resource_id: matchingResource.resource_id,
                 start_datetime: startDatetime,
-                end_datetime: endDatetime
+                end_datetime: endDatetime,
             });
             setCompleted(true);
             setTimeout(() => {
                 onClose();
             }, 2500);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Booking failed", error);
-            alert("Failed to submit booking request");
+            alert(error?.message || "Failed to submit booking request");
         } finally {
             setSubmitting(false);
         }
@@ -103,7 +139,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
                         <X size={24} />
                     </button>
 
-                    {/* Step Progress Bar (only if not completed) */}
+                    {/* Step Progress Bar */}
                     {!completed && !loading && (
                         <div className="absolute bottom-0 left-0 w-full h-1 bg-slate-100">
                             <div
@@ -191,7 +227,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
                                         {resourceTypes.map((type) => (
                                             <button
                                                 key={type.resource_type_id}
-                                                onClick={() => handleResourceSelect(type)}
+                                                onClick={() => handleResourceTypeSelect(type)}
                                                 disabled={submitting}
                                                 className="group flex items-center gap-4 p-5 bg-white border border-slate-200 rounded-2xl hover:border-fuchsia-500 hover:ring-4 hover:ring-fuchsia-50/50 transition-all duration-200 text-left shadow-sm hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                                             >

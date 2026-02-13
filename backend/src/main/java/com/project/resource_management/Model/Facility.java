@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,13 +17,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "facilities")
 public class Facility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "facility_id")
     private int facility_id;
 
-    // FetchType.LAZY means do not load this related data from database until i explicitly tell to do it !
+    // FetchType.LAZY means do not load this related data from database until i
+    // explicitly tell to do it !
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id", nullable = false)
     private Resources resource;

@@ -2,12 +2,30 @@
 
 import React, { useEffect, useState } from 'react';
 import { BookingModal } from './BookingModal';
+import { BookingDetailModal } from './BookingDetailModal';
 import { Clock, Calendar, Plus, Coffee, UserCircle2, CheckCircle, Timer } from 'lucide-react';
-import { fetchBookings, Booking } from '@/lib/mockApi';
+import { fetchBookings } from '@/lib/api';
+
+interface Booking {
+    booking_id: number;
+    startDatetime: string;
+    endDatetime: string;
+    status: "PENDING" | "APPROVED" | "REJECTED";
+    user?: { user_id: number; name: string };
+    resource?: {
+        resource_id: number;
+        resource_name: string;
+        floor_number?: number;
+        building?: { building_name: string };
+        resourceType?: { type_name: string };
+    };
+}
 
 export const TimetableGrid: React.FC = () => {
     const [modalOpen, setModalOpen] = useState(false);
+    const [detailModalOpen, setDetailModalOpen] = useState(false);
     const [selectedSlot, setSelectedSlot] = useState<{ date: string, startTime: string, endTime: string, dayName: string } | null>(null);
+    const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -16,6 +34,7 @@ export const TimetableGrid: React.FC = () => {
     }, []);
 
     const loadBookings = async () => {
+        setLoading(true);
         try {
             const data = await fetchBookings();
             setBookings(data);
@@ -26,12 +45,10 @@ export const TimetableGrid: React.FC = () => {
         }
     };
 
-    // Helper to check if a slot is booked
+    // Check if a booking matches a slot
     const getBookingForSlot = (date: string, startTime: string) => {
         return bookings.find(b => {
-            // Mock logic: exact start time match on the same day
-            // In production, would be date range overlap
-            const bookingStart = b.start_datetime; // YYYY-MM-DDTHH:mm:SS
+            const bookingStart = b.startDatetime; // "2026-02-10T07:45:00"
             const slotStart = `${date}T${startTime}:00`;
             return bookingStart === slotStart;
         });
@@ -79,9 +96,60 @@ export const TimetableGrid: React.FC = () => {
         setModalOpen(true);
     };
 
-    const handleBookingSuccess = () => {
-        loadBookings(); // Refresh bookings after a successful one
+    const handleBookingClick = (booking: Booking) => {
+        setSelectedBooking(booking);
+        setDetailModalOpen(true);
     };
+
+    const handleBookingSuccess = () => {
+        loadBookings(); // Refresh bookings after any CRUD operation
+    };
+
+    // Status badge styling
+    const statusStyles: Record<string, { card: string; badge: string }> = {
+        APPROVED: {
+            card: 'bg-emerald-50 border-emerald-200 hover:border-emerald-300 hover:shadow-md hover:shadow-emerald-100/50',
+            badge: 'bg-emerald-100 text-emerald-700',
+        },
+        PENDING: {
+            card: 'bg-amber-50 border-amber-200 hover:border-amber-300 hover:shadow-md hover:shadow-amber-100/50',
+            badge: 'bg-amber-100 text-amber-700',
+        },
+        REJECTED: {
+            card: 'bg-rose-50 border-rose-200 hover:border-rose-300 hover:shadow-md hover:shadow-rose-100/50',
+            badge: 'bg-rose-100 text-rose-700',
+        },
+    };
+
+    // Skeleton loader for timetable
+    if (loading) {
+        return (
+            <div className="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden animate-pulse">
+                <div className="grid grid-cols-[80px_repeat(5,1fr)] bg-slate-100 border-b border-slate-200">
+                    <div className="p-4"><div className="h-4 w-10 bg-slate-200 rounded mx-auto"></div></div>
+                    {[...Array(5)].map((_, i) => (
+                        <div key={i} className="p-4 border-l border-slate-200 flex flex-col items-center gap-2">
+                            <div className="h-3 w-8 bg-slate-200 rounded"></div>
+                            <div className="h-8 w-8 bg-slate-200 rounded-full"></div>
+                        </div>
+                    ))}
+                </div>
+                {[...Array(3)].map((_, rowIdx) => (
+                    <div key={rowIdx} className="grid grid-cols-[80px_repeat(5,1fr)] min-h-[140px] border-b border-slate-100">
+                        <div className="p-3 flex flex-col items-center pt-6 border-r border-slate-100">
+                            <div className="h-4 w-10 bg-slate-200 rounded mb-4"></div>
+                            <div className="h-3 w-10 bg-slate-100 rounded"></div>
+                        </div>
+                        {[...Array(5)].map((_, colIdx) => (
+                            <div key={colIdx} className="p-4 border-l border-slate-100">
+                                <div className="h-full rounded-md bg-slate-100 border border-slate-200"></div>
+                            </div>
+                        ))}
+                    </div>
+                ))}
+            </div>
+        );
+    }
 
     return (
         <>
@@ -108,7 +176,6 @@ export const TimetableGrid: React.FC = () => {
                     {timeline.map((row, idx) => {
                         const isBreak = row.type === 'break';
 
-                        // Break Row Layout
                         if (isBreak) {
                             return (
                                 <div key={idx} className="relative py-2 bg-slate-100/50 flex justify-center items-center border-b border-slate-200/60">
@@ -127,19 +194,21 @@ export const TimetableGrid: React.FC = () => {
                             );
                         }
 
-                        // Slot Row Layout
                         return (
                             <div key={idx} className="grid grid-cols-[80px_repeat(5,1fr)] min-h-[140px] group">
-                                {/* Time Column */}
                                 <div className="p-3 flex flex-col items-center justify-start pt-6 border-r border-slate-100 bg-white">
                                     <span className="text-sm font-bold text-slate-700 font-mono">{row.start}</span>
                                     <div className="h-8 w-px bg-slate-200 my-2"></div>
                                     <span className="text-xs text-slate-400 font-mono">{row.end}</span>
                                 </div>
 
-                                {/* Days Columns */}
                                 {weekDays.map((day, dayIdx) => {
                                     const booking = getBookingForSlot(day.isoDate, row.start);
+                                    const styles = booking ? (statusStyles[booking.status] || statusStyles.PENDING) : null;
+
+                                    // Check if this slot is in the past
+                                    const slotEnd = new Date(`${day.isoDate}T${row.end}:00`);
+                                    const isPastSlot = slotEnd < new Date();
 
                                     return (
                                         <div
@@ -147,33 +216,35 @@ export const TimetableGrid: React.FC = () => {
                                             className={`p-4 border-l border-slate-100 relative transition-all duration-200 ${day.isToday && !booking ? 'bg-indigo-50/10' : ''}`}
                                         >
                                             {booking ? (
-                                                <div className={`w-full h-full rounded-md border p-3 flex flex-col justify-between transition-all shadow-sm ${booking.status === 'APPROVED'
-                                                        ? 'bg-emerald-50 border-emerald-200 hover:border-emerald-300'
-                                                        : 'bg-amber-50 border-amber-200 hover:border-amber-300'
-                                                    }`}>
+                                                <button
+                                                    onClick={() => handleBookingClick(booking)}
+                                                    className={`w-full h-full rounded-md border p-3 flex flex-col justify-between transition-all shadow-sm cursor-pointer text-left ${styles!.card}`}
+                                                >
                                                     <div>
                                                         <div className="flex items-start justify-between mb-2">
-                                                            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full ${booking.status === 'APPROVED'
-                                                                    ? 'bg-emerald-100 text-emerald-700'
-                                                                    : 'bg-amber-100 text-amber-700'
-                                                                }`}>
+                                                            <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full ${styles!.badge}`}>
                                                                 {booking.status}
                                                             </span>
                                                         </div>
-                                                        <p className="text-sm font-bold text-slate-800 line-clamp-1" title={booking.building_name}>
-                                                            {booking.building_name}
+                                                        <p className="text-sm font-bold text-slate-800 line-clamp-1" title={booking.resource?.building?.building_name}>
+                                                            {booking.resource?.building?.building_name || "Unknown Building"}
                                                         </p>
                                                         <p className="text-xs text-slate-500 font-medium">
-                                                            {booking.resource_type}
+                                                            {booking.resource?.resourceType?.type_name || booking.resource?.resource_name || "Resource"}
                                                         </p>
                                                     </div>
 
                                                     <div className="flex items-center gap-2 pt-2 border-t border-black/5 mt-2">
                                                         <UserCircle2 size={14} className="text-slate-400" />
                                                         <span className="text-xs text-slate-600 font-semibold truncate">
-                                                            {booking.faculty_name}
+                                                            {booking.user?.name || "Unknown Faculty"}
                                                         </span>
                                                     </div>
+                                                </button>
+                                            ) : isPastSlot ? (
+                                                <div className="w-full h-full rounded-md border border-dashed border-slate-200 bg-slate-50/50 flex flex-col items-center justify-center gap-1 opacity-50">
+                                                    <Clock size={16} className="text-slate-300" />
+                                                    <span className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Past</span>
                                                 </div>
                                             ) : (
                                                 <button
@@ -197,13 +268,25 @@ export const TimetableGrid: React.FC = () => {
                 </div>
             </div>
 
+            {/* Create Booking Modal */}
             <BookingModal
                 isOpen={modalOpen}
                 onClose={() => {
                     setModalOpen(false);
-                    handleBookingSuccess(); // Ideally only on success, but for now simple refresh
+                    handleBookingSuccess();
                 }}
                 slot={selectedSlot}
+            />
+
+            {/* View/Update/Delete Booking Modal */}
+            <BookingDetailModal
+                isOpen={detailModalOpen}
+                onClose={() => {
+                    setDetailModalOpen(false);
+                    setSelectedBooking(null);
+                }}
+                booking={selectedBooking}
+                onUpdated={handleBookingSuccess}
             />
         </>
     );

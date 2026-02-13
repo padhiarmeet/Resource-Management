@@ -43,8 +43,8 @@ public class BookingController {
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<?> getUsersBooking(@PathVariable int uesrId) {
-        return new ResponseEntity<>(bookingService.getBookingsByUserId(uesrId), HttpStatus.OK);
+    public ResponseEntity<?> getUsersBooking(@PathVariable int id) {
+        return new ResponseEntity<>(bookingService.getBookingsByUserId(id), HttpStatus.OK);
     }
 
     @PostMapping("/")

@@ -13,7 +13,7 @@ import com.project.resource_management.Services.ShelfService;
 
 @RestController
 @CrossOrigin()
-@RequestMapping("/api/shelves")
+@RequestMapping("api/shelves")
 public class ShelfController {
 
     @Autowired
@@ -46,7 +46,7 @@ public class ShelfController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateShelf(@PathVariable int id, @RequestBody ShelfDTO dto) {
         Shelf updated = shelfService.updateShelf(id, dto);
-        
+
         if (updated != null) {
             return new ResponseEntity<>(updated, HttpStatus.OK);
         } else {
@@ -58,7 +58,7 @@ public class ShelfController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteShelf(@PathVariable int id) {
         boolean isDeleted = shelfService.deleteShelf(id);
-        
+
         if (isDeleted) {
             return new ResponseEntity<>("Shelf deleted successfully", HttpStatus.OK);
         } else {

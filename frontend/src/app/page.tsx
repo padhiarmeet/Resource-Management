@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/Button"; // Keep your shadcn button
+import { Button } from "@/components/ui/Button";
 import {
     BookOpen,
     LayoutDashboard,
@@ -9,8 +11,91 @@ import {
     Clock,
     HardDrive
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { fetchBookings, fetchResources, fetchCupboards } from "@/lib/api";
 
 export default function Home() {
+    const [stats, setStats] = useState({
+        liveNow: null as any,
+        approvedBookings: 0,
+        pendingBookings: 0,
+        emptySlots: 0, // This is hard to calculate without a fixed total, we'll use a placeholder or derived value
+        resourceCounts: {
+            Auditorium: 0,
+            Classroom: 0,
+            Lab: 0,
+            "Meeting Room": 0
+        },
+        totalResources: 0,
+        cupboardCount: 0
+    });
+
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function loadData() {
+            try {
+                const [bookings, resources, cupboards] = await Promise.all([
+                    fetchBookings(),
+                    fetchResources(),
+                    fetchCupboards()
+                ]);
+
+                // Process Bookings
+                const now = new Date();
+                let live = null;
+                let approved = 0;
+                let pending = 0;
+
+                bookings.forEach((b: any) => {
+                    const start = new Date(b.startDatetime);
+                    const end = new Date(b.endDatetime);
+
+                    if (b.status === "APPROVED") approved++;
+                    if (b.status === "PENDING") pending++;
+
+                    if (b.status === "APPROVED" && now >= start && now <= end) {
+                        live = b;
+                    }
+                });
+
+                // Process Resources
+                const counts: any = { Auditorium: 0, Classroom: 0, Lab: 0, "Meeting Room": 0 };
+                resources.forEach((r: any) => {
+                    // Adjust type matching based on actual DB values (e.g., "Classroom", "Laboratory")
+                    const type = r.resourceType?.type_name || "Unknown";
+                    // Simple fuzzy matching or direct mapping
+                    if (type.includes("Classroom")) counts.Classroom++;
+                    else if (type.includes("Lab")) counts.Lab++;
+                    else if (type.includes("Auditorium")) counts.Auditorium++;
+                    else if (type.includes("Meeting")) counts["Meeting Room"]++;
+                });
+
+                setStats({
+                    liveNow: live,
+                    approvedBookings: approved,
+                    pendingBookings: pending,
+                    emptySlots: 5, // Placeholder/Mock for now as "Empty" implies unbooked slots in a schedule, which is complex
+                    resourceCounts: counts,
+                    totalResources: resources.length,
+                    cupboardCount: cupboards.length
+                });
+
+            } catch (error) {
+                console.error("Failed to load dashboard data", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadData();
+    }, []);
+
+    // Helper to format time
+    const formatTime = (dateStr: string) => {
+        return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
     return (
         <main className="min-h-screen flex items-center justify-center p-4 lg:p-8 font-sans text-slate-900">
 
@@ -62,7 +147,7 @@ export default function Home() {
                     </div>
                 </div>
 
-                {/* RIGHT SIDE: The Visual (CSS Re-creation of your Screenshot) */}
+                {/* RIGHT SIDE: The Visual */}
                 <div className="hidden lg:flex w-[60%] bg-[#F8FAFC] relative p-12 items-center justify-center overflow-hidden">
 
                     {/* Abstract Background Blobs */}
@@ -103,11 +188,26 @@ export default function Home() {
                                 <div className="col-span-2 bg-[#F3F5F7] rounded-[1.5rem] p-5 flex flex-col justify-between group hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200">
                                     <div className="flex justify-between items-start">
                                         <div className="p-2 bg-white rounded-full shadow-sm text-pink-500"><Clock size={18} /></div>
-                                        <span className="bg-slate-900 text-white text-[10px] px-2 py-1 rounded-full">Live Now</span>
+                                        {stats.liveNow ? (
+                                            <span className="bg-slate-900 text-white text-[10px] px-2 py-1 rounded-full">Live Now</span>
+                                        ) : (
+                                            <span className="bg-slate-300 text-slate-600 text-[10px] px-2 py-1 rounded-full">No Active Session</span>
+                                        )}
                                     </div>
                                     <div>
-                                        <h4 className="text-3xl font-bold text-slate-800 mb-1">10:30 AM</h4>
-                                        <p className="text-sm text-slate-500 font-medium">Advanced Data Structures • Hall B-402</p>
+                                        {stats.liveNow ? (
+                                            <>
+                                                <h4 className="text-3xl font-bold text-slate-800 mb-1">{formatTime(stats.liveNow.startDatetime)}</h4>
+                                                <p className="text-sm text-slate-500 font-medium">
+                                                    {stats.liveNow.resource?.resource_name || "Unknown Resource"} • {stats.liveNow.user?.name || "Faculty"}
+                                                </p>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <h4 className="text-3xl font-bold text-slate-800 mb-1">--:--</h4>
+                                                <p className="text-sm text-slate-500 font-medium">No sessions currently running.</p>
+                                            </>
+                                        )}
                                     </div>
                                     {/* Fake timeline bars */}
                                     <div className="flex gap-1 h-2 mt-4">
@@ -116,21 +216,21 @@ export default function Home() {
                                     </div>
                                 </div>
 
-                                {/* Card: Digital Cupboard */}
+                                {/* Card: Storage / Cupboard */}
                                 <div className="col-span-1 bg-[#1A1F2C] rounded-[1.5rem] p-5 text-white flex flex-col justify-between relative overflow-hidden">
                                     {/* Decorative blob */}
                                     <div className="absolute top-[-20px] right-[-20px] w-20 h-20 bg-blue-500 blur-2xl opacity-40"></div>
 
                                     <div className="flex items-center gap-2 text-slate-300">
                                         <HardDrive size={16} />
-                                        <span className="text-xs font-semibold">Cupboard</span>
+                                        <span className="text-xs font-semibold">Cupboards</span>
                                     </div>
                                     <div>
-                                        <div className="text-2xl font-bold mb-1">82%</div>
-                                        <div className="text-[10px] text-slate-400">1.2GB Free of 5GB</div>
+                                        <div className="text-2xl font-bold mb-1">{stats.cupboardCount}</div>
+                                        <div className="text-[10px] text-slate-400">Total Storage Units</div>
                                     </div>
                                     <div className="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                                        <div className="bg-blue-400 h-full w-[82%]"></div>
+                                        <div className="bg-blue-400 h-full w-[60%]"></div>
                                     </div>
                                 </div>
 
@@ -143,24 +243,24 @@ export default function Home() {
                                                 <div className="w-2 h-2 rounded-full bg-violet-500"></div>
                                                 <span className="text-slate-700">Auditorium</span>
                                             </div>
-                                            <span className="font-bold text-slate-900">3</span>
+                                            <span className="font-bold text-slate-900">{stats.resourceCounts.Auditorium}</span>
                                         </div>
                                         <div className="flex items-center justify-between text-xs">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                                                 <span className="text-slate-700">Classroom</span>
                                             </div>
-                                            <span className="font-bold text-slate-900">12</span>
+                                            <span className="font-bold text-slate-900">{stats.resourceCounts.Classroom}</span>
                                         </div>
                                         <div className="flex items-center justify-between text-xs">
                                             <div className="flex items-center gap-2">
                                                 <div className="w-2 h-2 rounded-full bg-pink-500"></div>
                                                 <span className="text-slate-700">Lab</span>
                                             </div>
-                                            <span className="font-bold text-slate-900">5</span>
+                                            <span className="font-bold text-slate-900">{stats.resourceCounts.Lab}</span>
                                         </div>
                                     </div>
-                                    <div className="mt-2 text-xs text-slate-400 text-right">Total: 20</div>
+                                    <div className="mt-2 text-xs text-slate-400 text-right">Total: {stats.totalResources}</div>
                                 </div>
 
                                 {/* Card: Booking Status (Pending, Approved, Empty) */}
@@ -172,17 +272,17 @@ export default function Home() {
                                     <div className="grid grid-cols-3 gap-3">
                                         {/* Approved */}
                                         <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-1">
-                                            <div className="text-lg font-bold text-green-600">8</div>
+                                            <div className="text-lg font-bold text-green-600">{stats.approvedBookings}</div>
                                             <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Approved</div>
                                         </div>
                                         {/* Pending */}
                                         <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-1">
-                                            <div className="text-lg font-bold text-amber-500">3</div>
+                                            <div className="text-lg font-bold text-amber-500">{stats.pendingBookings}</div>
                                             <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Pending</div>
                                         </div>
                                         {/* Empty/Available */}
                                         <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-1">
-                                            <div className="text-lg font-bold text-slate-400">5</div>
+                                            <div className="text-lg font-bold text-slate-400">{stats.emptySlots}</div>
                                             <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Empty</div>
                                         </div>
                                     </div>

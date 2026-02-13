@@ -36,10 +36,9 @@ public class FacilityController {
     public ResponseEntity<?> addFacility(@RequestBody FacilityDTO request) {
         try {
             Facility newFacility = facilityService.addFacility(
-                request.getFacility_name(),
-                request.getDetails(),
-                request.getResource_id()
-            );
+                    request.getFacility_name(),
+                    request.getDetails(),
+                    request.getResource_id());
             return new ResponseEntity<>(newFacility, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -50,10 +49,9 @@ public class FacilityController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateFacility(@PathVariable int id, @RequestBody FacilityDTO request) {
         Facility updated = facilityService.updateFacility(
-            id, 
-            request.getFacility_name(), 
-            request.getDetails()
-        );
+                id,
+                request.getFacility_name(),
+                request.getDetails());
 
         if (updated != null) {
             return new ResponseEntity<>(updated, HttpStatus.OK);
@@ -66,7 +64,7 @@ public class FacilityController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteFacility(@PathVariable int id) {
         boolean isDeleted = facilityService.deleteFacility(id);
-        
+
         if (isDeleted) {
             return new ResponseEntity<>("Facility deleted successfully", HttpStatus.OK);
         } else {

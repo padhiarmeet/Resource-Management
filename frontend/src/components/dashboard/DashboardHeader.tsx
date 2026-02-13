@@ -1,27 +1,19 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, Plus } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Search } from "lucide-react";
 
-export const DashboardHeader: React.FC = () => {
-    const [greeting, setGreeting] = useState("Good morning");
-    const [facultyName, setFacultyName] = useState("Priya Sharma"); // Hardcoded for now until auth is connected
+interface DashboardHeaderProps {
+    title?: React.ReactNode;
+    subtitle?: React.ReactNode;
+}
 
-    useEffect(() => {
-        const hour = new Date().getHours();
-        if (hour < 12) setGreeting("Good morning");
-        else if (hour < 18) setGreeting("Good afternoon");
-        else setGreeting("Good evening");
-    }, []);
-
+export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ title, subtitle }) => {
     return (
         <header className="flex justify-between items-start mb-8">
             <div>
-                <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-                <p className="text-sm text-slate-500 mt-1">
-                    {greeting}, <span className="font-semibold text-indigo-600">{facultyName} Sir</span>.
-                </p>
+                {title && <h1 className="text-2xl font-bold text-slate-900">{title}</h1>}
+                {subtitle && <div className="text-sm text-slate-500 mt-1">{subtitle}</div>}
             </div>
 
             <div className="flex items-center gap-3">
@@ -33,10 +25,6 @@ export const DashboardHeader: React.FC = () => {
                         className="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-64 shadow-sm"
                     />
                 </div>
-                <Button className="h-9 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-medium shadow-sm transition-colors flex items-center gap-2">
-                    <Plus size={16} />
-                    New Booking
-                </Button>
             </div>
         </header>
     );

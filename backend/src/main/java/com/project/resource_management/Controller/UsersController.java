@@ -16,15 +16,15 @@ import com.project.resource_management.Services.UsersService;
 @RestController
 @CrossOrigin
 
-@RequestMapping("api/users/")
+@RequestMapping("api/users")
 public class UsersController {
-    
+
     @Autowired
     private UsersService service;
-    
+
     @GetMapping("/")
     public ResponseEntity<List<Users>> getAllUsers() {
-        return new ResponseEntity<>(service.getAllUsers(),HttpStatus.OK);
+        return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
     }
-    
+
 }

@@ -1,7 +1,9 @@
+"use client";
+
 import React from "react";
 import { Clock, MapPin, MoreHorizontal } from "lucide-react";
 
-interface TimelineEvent {
+export interface TimelineEvent {
     id: string;
     time: string;
     title: string;
@@ -9,30 +11,42 @@ interface TimelineEvent {
     status: "live" | "upcoming" | "completed";
 }
 
-export const BookingTimeline: React.FC = () => {
-    const events: TimelineEvent[] = [
-        {
-            id: "1",
-            time: "10:30 - 11:30 AM",
-            title: "Advanced Data Structures",
-            location: "Hall B-402",
-            status: "live",
-        },
-        {
-            id: "2",
-            time: "01:00 - 02:00 PM",
-            title: "Faculty Meeting",
-            location: "Conf. Room A",
-            status: "upcoming",
-        },
-        {
-            id: "3",
-            time: "03:30 - 05:00 PM",
-            title: "Physics Lab Review",
-            location: "Lab Complex 3",
-            status: "upcoming",
-        },
-    ];
+interface BookingTimelineProps {
+    events: TimelineEvent[];
+    loading?: boolean;
+}
+
+const SkeletonRow = () => (
+    <div className="flex items-center justify-between p-3 rounded-lg border border-slate-100 animate-pulse">
+        <div className="flex items-center gap-4">
+            <div className="w-2 h-2 rounded-full bg-slate-200"></div>
+            <div>
+                <div className="h-4 w-40 bg-slate-200 rounded mb-2"></div>
+                <div className="h-3 w-56 bg-slate-100 rounded"></div>
+            </div>
+        </div>
+        <div className="w-4 h-4 bg-slate-200 rounded"></div>
+    </div>
+);
+
+export const BookingTimeline: React.FC<BookingTimelineProps> = ({ events = [], loading }) => {
+    if (loading) {
+        return (
+            <div className="space-y-3">
+                <SkeletonRow />
+                <SkeletonRow />
+                <SkeletonRow />
+            </div>
+        );
+    }
+
+    if (events.length === 0) {
+        return (
+            <div className="text-center py-8 text-slate-400 text-sm">
+                No scheduled bookings found.
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-3">
@@ -40,8 +54,8 @@ export const BookingTimeline: React.FC = () => {
                 <div
                     key={event.id}
                     className={`flex items-center justify-between p-3 rounded-lg border ${event.status === "live"
-                            ? "bg-indigo-50 border-indigo-100"
-                            : "bg-white border-slate-100 hover:border-slate-200"
+                        ? "bg-indigo-50 border-indigo-100"
+                        : "bg-white border-slate-100 hover:border-slate-200"
                         } transition-colors`}
                 >
                     <div className="flex items-center gap-4">
