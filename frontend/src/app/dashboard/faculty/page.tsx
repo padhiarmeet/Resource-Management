@@ -147,9 +147,9 @@ export default function FacultyDashboard() {
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* LEFT COLUMN: Schedule */}
                         <div className="lg:col-span-2 space-y-8">
-                            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                            <div className="bg-white rounded-lg border border-slate-200 overflow-hidden">
                                 <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                                    <h3 className="text-lg font-bold text-slate-900">Today&apos;s Schedule</h3>
+                                    <h3 className="text-base font-bold text-slate-800">Today&apos;s Schedule</h3>
                                     <Link href="/dashboard/faculty/booking" className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
                                         View Full Schedule <ArrowRight className="w-4 h-4" />
                                     </Link>
@@ -157,7 +157,7 @@ export default function FacultyDashboard() {
                                 <div className="p-6">
                                     {loading ? (
                                         <div className="flex items-center justify-center py-12">
-                                            <Loader2 className="w-6 h-6 text-indigo-500 animate-spin" />
+                                            <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
                                         </div>
                                     ) : todaySchedule.length === 0 ? (
                                         <div className="text-center py-12">
@@ -178,14 +178,14 @@ export default function FacultyDashboard() {
                                                 return (
                                                     <div
                                                         key={booking.booking_id}
-                                                        className={`flex items-start gap-4 p-4 rounded-xl relative group transition-colors ${isOngoing
-                                                            ? "bg-indigo-50 border border-indigo-200"
+                                                        className={`flex items-start gap-4 p-4 rounded-md relative group transition-colors ${isOngoing
+                                                            ? "bg-slate-50 border border-indigo-200"
                                                             : isPast
                                                                 ? "bg-white border border-slate-100 opacity-60"
-                                                                : "bg-slate-50 border border-slate-100 hover:border-indigo-200"
+                                                                : "bg-white border border-slate-100 hover:border-slate-300"
                                                             }`}
                                                     >
-                                                        <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-xl ${isOngoing ? "bg-indigo-500" : isPast ? "bg-slate-300" : "bg-slate-300"}`}></div>
+                                                        <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-l-md ${isOngoing ? "bg-indigo-600" : isPast ? "bg-slate-200" : "bg-slate-300"}`}></div>
                                                         <div className="min-w-[80px] text-center">
                                                             <div className="text-sm font-bold text-slate-900">
                                                                 {start.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
@@ -219,19 +219,18 @@ export default function FacultyDashboard() {
                         </div>
 
                         {/* RIGHT COLUMN: Quick Actions & Notifications */}
-                        <div className="space-y-8">
+                        <div className="space-y-6">
                             {/* Quick Book Widget */}
-                            <div className="bg-indigo-900 rounded-3xl shadow-lg p-6 text-white relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                            <div className="bg-slate-900 rounded-lg p-6 text-white border border-slate-800">
                                 <div className="relative z-10">
                                     <h3 className="text-lg font-bold mb-2">Quick Book</h3>
-                                    <p className="text-indigo-200 text-sm mb-6">Instantly reserve a lab or room for ad-hoc sessions.</p>
+                                    <p className="text-slate-400 text-sm mb-6">Instantly reserve a lab or room for ad-hoc sessions.</p>
                                     <div className="space-y-3">
-                                        <Link href="/dashboard/faculty/booking" className="w-full py-2.5 px-4 rounded-xl bg-white text-indigo-900 text-sm font-semibold hover:bg-indigo-50 transition-colors text-left flex items-center justify-between group">
+                                        <Link href="/dashboard/faculty/booking" className="w-full py-2.5 px-4 rounded-md bg-white text-slate-900 text-sm font-semibold hover:bg-slate-100 transition-colors text-left flex items-center justify-between group">
                                             Book Computer Lab
                                             <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </Link>
-                                        <Link href="/dashboard/faculty/booking" className="w-full py-2.5 px-4 rounded-xl bg-white/10 text-white border border-white/20 text-sm font-semibold hover:bg-white/20 transition-colors text-left flex items-center justify-between group">
+                                        <Link href="/dashboard/faculty/booking" className="w-full py-2.5 px-4 rounded-md bg-white/5 text-slate-300 border border-slate-700 text-sm font-semibold hover:bg-white/10 transition-colors text-left flex items-center justify-between group">
                                             Book Seminar Hall
                                             <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                                         </Link>
@@ -240,11 +239,11 @@ export default function FacultyDashboard() {
                             </div>
 
                             {/* Notifications */}
-                            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
-                                <h3 className="text-lg font-bold text-slate-900 mb-4">Recent Notifications</h3>
+                            <div className="bg-white rounded-lg border border-slate-200 p-6">
+                                <h3 className="text-base font-bold text-slate-800 mb-4">Notifications</h3>
                                 {loading ? (
                                     <div className="flex justify-center py-6">
-                                        <Loader2 className="w-5 h-5 text-slate-400 animate-spin" />
+                                        <Loader2 className="w-5 h-5 text-slate-300 animate-spin" />
                                     </div>
                                 ) : notifications.length === 0 ? (
                                     <p className="text-sm text-slate-400 text-center py-6">No notifications yet.</p>
@@ -252,7 +251,7 @@ export default function FacultyDashboard() {
                                     <div className="space-y-4">
                                         {notifications.map((notif) => (
                                             <div key={notif.id} className="flex gap-3">
-                                                <div className={`mt-1 w-2 h-2 rounded-full ${notif.color} shrink-0`}></div>
+                                                <div className={`mt-1.5 w-2 h-2 rounded-full ${notif.color} shrink-0`}></div>
                                                 <div>
                                                     <p className="text-sm text-slate-800 font-medium">{notif.message}</p>
                                                     <p className="text-xs text-slate-500 mt-0.5">{notif.detail}</p>
@@ -261,7 +260,8 @@ export default function FacultyDashboard() {
                                             </div>
                                         ))}
                                     </div>
-                                )}
+                                )
+                                }
                             </div>
                         </div>
                     </div>
@@ -273,20 +273,16 @@ export default function FacultyDashboard() {
 
 // Reusable stat card
 function StatCard({ label, value, icon: Icon, color }: { label: string; value: string; icon: React.ElementType; color: string }) {
-    const colorMap: Record<string, string> = {
-        indigo: "bg-indigo-50 text-indigo-600",
-        amber: "bg-amber-50 text-amber-600",
-        emerald: "bg-emerald-50 text-emerald-600",
-        blue: "bg-blue-50 text-blue-600",
-    };
     return (
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
-            <div>
-                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">{label}</p>
-                <h3 className="text-2xl font-bold text-slate-900">{value}</h3>
+        <div className="bg-white p-5 rounded-lg border border-slate-200 flex flex-col justify-between h-full hover:border-slate-300 transition-colors">
+            <div className="flex items-start justify-between mb-3">
+                <div className="p-2 bg-slate-50 rounded-md text-slate-500">
+                    <Icon size={18} />
+                </div>
             </div>
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${colorMap[color]}`}>
-                <Icon className="w-5 h-5" />
+            <div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-1">{value}</h3>
+                <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider">{label}</p>
             </div>
         </div>
     );

@@ -53,8 +53,8 @@ export const BookingTimeline: React.FC<BookingTimelineProps> = ({ events = [], l
             {events.map((event) => (
                 <div
                     key={event.id}
-                    className={`flex items-center justify-between p-3 rounded-lg border ${event.status === "live"
-                        ? "bg-indigo-50 border-indigo-100"
+                    className={`flex items-center justify-between p-3.5 rounded-md border ${event.status === "live"
+                        ? "bg-indigo-50/50 border-indigo-100"
                         : "bg-white border-slate-100 hover:border-slate-200"
                         } transition-colors`}
                 >

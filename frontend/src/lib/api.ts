@@ -172,3 +172,42 @@ export async function updateMaintenanceNotes(id: number, notes: string) {
         body: JSON.stringify({ notes }),
     });
 }
+// ─── User Management APIs ───
+
+export interface User {
+    user_id: number;
+    name: string;
+    email: string;
+    role: string;
+    password?: string; // Optional for updates
+}
+
+export async function fetchUsers() {
+    return apiFetch("/users/");
+}
+
+export async function createUser(user: Partial<User>) {
+    return apiFetch("/users/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+    });
+}
+
+export async function updateUser(id: number, user: Partial<User>) {
+    return apiFetch(`/users/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(user),
+    });
+}
+
+export async function deleteUser(id: number) {
+    const response = await fetch(`${API_BASE_URL}/users/${id}`, {
+        method: "DELETE",
+    });
+    if (!response.ok) {
+        throw new Error(response.statusText);
+    }
+    return response.text();
+}

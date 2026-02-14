@@ -49,7 +49,7 @@ export const ResourceChart: React.FC<ResourceChartProps> = ({ data, loading }) =
 
             <div className="flex justify-center items-center flex-1">
                 {/* CSS Donut Chart */}
-                <div className="relative w-40 h-40 rounded-full border-[12px] border-slate-100 flex items-center justify-center">
+                <div className="relative w-40 h-40 rounded-full border-[10px] border-slate-50 flex items-center justify-center">
                     <svg className="absolute inset-0 w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                         {/* Classroom segment (indigo) */}
                         <circle cx="50" cy="50" r="40" stroke="#4f46e5" strokeWidth="8" fill="none"

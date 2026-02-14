@@ -47,7 +47,7 @@ export const MaintenanceWidget: React.FC<MaintenanceWidgetProps> = ({ issues = [
     }
 
     return (
-        <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+        <div className="bg-white border border-slate-200 rounded-lg p-6">
             <div className="flex justify-between items-center mb-4">
                 <h3 className="text-base font-bold text-slate-800">Maintenance</h3>
                 <span className={`text-xs font-semibold px-2 py-1 rounded ${openIssues.length > 0 ? 'text-amber-600 bg-amber-50' : 'text-green-600 bg-green-50'}`}>

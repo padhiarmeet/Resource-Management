@@ -37,27 +37,28 @@ export const StatsCard: React.FC<StatsCardProps> = ({
     }
 
     return (
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-start justify-between hover:border-indigo-300 transition-colors cursor-default group">
-            <div>
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">{title}</p>
-                <div className="flex items-baseline gap-2">
-                    <h3 className="text-2xl font-bold text-slate-800">{value}</h3>
-                    {trend && (
-                        <span
-                            className={`text-xs font-medium px-1.5 py-0.5 rounded ${trend === "up"
-                                ? "bg-emerald-50 text-emerald-600"
-                                : trend === "down"
-                                    ? "bg-rose-50 text-rose-600"
-                                    : "bg-slate-100 text-slate-600"
-                                }`}
-                        >
-                            {trendValue}
-                        </span>
-                    )}
+        <div className="bg-white border border-slate-200 rounded-lg p-5 flex flex-col justify-between hover:border-slate-300 transition-all cursor-default group h-full">
+            <div className="flex items-start justify-between mb-4">
+                <div className={`p-2.5 rounded-md ${alert ? 'bg-red-50 text-red-500' : 'bg-slate-50 text-slate-500 group-hover:text-slate-700 group-hover:bg-slate-100'} transition-colors`}>
+                    <Icon size={20} strokeWidth={2} />
                 </div>
+                {trend && (
+                    <span
+                        className={`text-[11px] font-semibold px-2 py-1 rounded-full ${trend === "up"
+                            ? "bg-emerald-50 text-emerald-600"
+                            : trend === "down"
+                                ? "bg-rose-50 text-rose-600"
+                                : "bg-slate-50 text-slate-500"
+                            }`}
+                    >
+                        {trendValue}
+                    </span>
+                )}
             </div>
-            <div className={`p-2 rounded-lg ${alert ? 'bg-red-50 text-red-500' : 'bg-slate-50 text-slate-400 group-hover:text-indigo-600 group-hover:bg-indigo-50'} transition-colors`}>
-                <Icon size={20} />
+
+            <div>
+                <h3 className="text-3xl font-bold text-slate-900 tracking-tight mb-1">{value}</h3>
+                <p className="text-sm font-medium text-slate-500">{title}</p>
             </div>
         </div>
     );

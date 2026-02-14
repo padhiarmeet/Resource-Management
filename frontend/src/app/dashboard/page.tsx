@@ -195,11 +195,11 @@ export default function Dashboard() {
 
                         {/* Main Interaction Area (Timeline) */}
                         <div className="xl:col-span-2 space-y-6">
-                            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+                            <div className="bg-white border border-slate-200 rounded-lg p-6">
                                 <h3 className="text-base font-bold text-slate-800 mb-4">All Schedules</h3>
                                 <BookingTimeline events={timelineEvents} loading={loading} />
                             </div>
-                            <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm min-h-[300px]">
+                            <div className="bg-white border border-slate-200 rounded-lg p-6 min-h-[300px]">
                                 <ResourceChart data={chartData} loading={loading} />
                             </div>
                         </div>
@@ -209,10 +209,10 @@ export default function Dashboard() {
                             <MaintenanceWidget issues={maintenanceIssues} loading={loading} />
 
                             {/* QUICK ACTIONS WIDGET */}
-                            <div className="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-xl p-6 text-white shadow-lg">
+                            <div className="bg-slate-900 rounded-lg p-6 text-white shadow-none border border-slate-800">
                                 <h3 className="font-bold text-lg mb-2">Need a Lab?</h3>
-                                <p className="text-indigo-100 text-sm mb-4">Quickly book a computer lab for your upcoming session.</p>
-                                <Link href="/dashboard/faculty/booking" className="block w-full py-2 bg-white text-indigo-700 font-semibold rounded-lg text-sm hover:bg-indigo-50 transition-colors text-center">Book Now</Link>
+                                <p className="text-slate-300 text-sm mb-4">Quickly book a computer lab for your upcoming session.</p>
+                                <Link href="/dashboard/faculty/booking" className="block w-full py-2.5 bg-white text-slate-900 font-semibold rounded-md text-sm hover:bg-slate-100 transition-colors text-center">Book Now</Link>
                             </div>
                         </div>
 

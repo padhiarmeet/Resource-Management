@@ -29,6 +29,20 @@ export const TimetableGrid: React.FC = () => {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // State for current week view
+    const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => {
+        const curr = new Date();
+        const day = curr.getDay(); // 0 = Sunday, 1 = Monday, ... 6 = Saturday
+
+        // If today is Saturday (6) or Sunday (0), show next week's Monday
+        // Otherwise, show this week's Monday
+        const daysUntilMonday = day === 0 ? 1 : (day === 6 ? 2 : 1 - day);
+
+        const nextMonday = new Date(curr);
+        nextMonday.setDate(curr.getDate() + daysUntilMonday);
+        return nextMonday;
+    });
+
     useEffect(() => {
         loadBookings();
     }, []);
@@ -45,23 +59,39 @@ export const TimetableGrid: React.FC = () => {
         }
     };
 
+    // Navigation handlers
+    const handlePrevWeek = () => {
+        const newDate = new Date(currentWeekStart);
+        newDate.setDate(newDate.getDate() - 7);
+        setCurrentWeekStart(newDate);
+    };
+
+    const handleNextWeek = () => {
+        const newDate = new Date(currentWeekStart);
+        newDate.setDate(newDate.getDate() + 7);
+        setCurrentWeekStart(newDate);
+    };
+
     // Check if a booking matches a slot
     const getBookingForSlot = (date: string, startTime: string) => {
         return bookings.find(b => {
-            const bookingStart = b.startDatetime; // "2026-02-10T07:45:00"
+            const bookingStart = b.startDatetime;
             const slotStart = `${date}T${startTime}:00`;
             return bookingStart === slotStart;
         });
     };
 
     const getWeekDays = () => {
-        const curr = new Date();
-        const first = curr.getDate() - curr.getDay() + 1;
         const days = [];
         const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
+        // Clone to avoid mutating state directly in loop
+        const start = new Date(currentWeekStart);
+
         for (let i = 0; i < 5; i++) {
-            const next = new Date(curr.setDate(first + i));
+            const next = new Date(start);
+            next.setDate(start.getDate() + i);
+
             const isToday = new Date().toDateString() === next.toDateString();
             days.push({
                 name: dayNames[i],
@@ -76,6 +106,9 @@ export const TimetableGrid: React.FC = () => {
     };
 
     const weekDays = getWeekDays();
+
+    // Format range for display
+    const weekRange = `${weekDays[0].dayNum} ${weekDays[0].fullName.slice(0, 3)} - ${weekDays[4].dayNum} ${weekDays[4].fullName.slice(0, 3)}`;
 
     const timeline = [
         { type: 'slot', label: 'Slot 1', start: '07:45', end: '09:35' },
@@ -125,6 +158,14 @@ export const TimetableGrid: React.FC = () => {
     if (loading) {
         return (
             <div className="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden animate-pulse">
+                {/* Skeleton Header */}
+                <div className="flex items-center justify-between p-4 border-b border-slate-200">
+                    <div className="h-6 w-32 bg-slate-200 rounded"></div>
+                    <div className="flex gap-2">
+                        <div className="h-8 w-8 bg-slate-200 rounded"></div>
+                        <div className="h-8 w-8 bg-slate-200 rounded"></div>
+                    </div>
+                </div>
                 <div className="grid grid-cols-[80px_repeat(5,1fr)] bg-slate-100 border-b border-slate-200">
                     <div className="p-4"><div className="h-4 w-10 bg-slate-200 rounded mx-auto"></div></div>
                     {[...Array(5)].map((_, i) => (
@@ -154,6 +195,51 @@ export const TimetableGrid: React.FC = () => {
     return (
         <>
             <div className="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+
+                {/* Navigation Header */}
+                <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-white">
+                    <div className="flex items-center gap-4">
+                        <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                            <Calendar size={20} className="text-indigo-600" />
+                            <span>{weekRange}</span>
+                            {/* Show year if needed, or keeping it simple */}
+                            <span className="text-sm font-normal text-slate-400">
+                                {currentWeekStart.getFullYear()}
+                            </span>
+                        </h2>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={handlePrevWeek}
+                            className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-indigo-600 transition-colors border border-slate-200"
+                            title="Previous Week"
+                        >
+                            ← Prev
+                        </button>
+                        <button
+                            onClick={() => {
+                                const curr = new Date();
+                                const day = curr.getDay();
+                                const daysUntilMonday = day === 0 ? 1 : (day === 6 ? 2 : 1 - day);
+                                const nextMonday = new Date(curr);
+                                nextMonday.setDate(curr.getDate() + daysUntilMonday);
+                                setCurrentWeekStart(nextMonday);
+                            }}
+                            className="px-3 py-2 text-sm font-medium bg-slate-100 text-slate-600 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
+                        >
+                            Today
+                        </button>
+                        <button
+                            onClick={handleNextWeek}
+                            className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-indigo-600 transition-colors border border-slate-200"
+                            title="Next Week"
+                        >
+                            Next →
+                        </button>
+                    </div>
+                </div>
+
                 {/* Header Row */}
                 <div className="grid grid-cols-[80px_repeat(5,1fr)] bg-slate-100 border-b border-slate-200 sticky top-0 z-10">
                     <div className="p-4 flex flex-col justify-center items-center text-slate-700 font-bold text-sm uppercase tracking-wider">

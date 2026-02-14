@@ -46,6 +46,24 @@ export const BookingDetailModal: React.FC<BookingDetailModalProps> = ({
     const [deleting, setDeleting] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
     const [actionDone, setActionDone] = useState<string | null>(null);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+    // Check user role on mount
+    React.useEffect(() => {
+        if (isOpen) {
+            try {
+                const stored = localStorage.getItem("user");
+                if (stored) {
+                    const user = JSON.parse(stored);
+                    setIsAdmin(user.role === "ADMIN");
+                    setCurrentUserId(user.userId);
+                }
+            } catch (e) {
+                console.error("Failed to parse user from localStorage", e);
+            }
+        }
+    }, [isOpen]);
 
     if (!isOpen || !booking) return null;
 
@@ -62,7 +80,7 @@ export const BookingDetailModal: React.FC<BookingDetailModalProps> = ({
     const handleStatusUpdate = async (newStatus: string) => {
         setUpdating(true);
         try {
-            await updateBookingStatus(booking.booking_id, newStatus, 1); // approverId=1 hardcoded
+            await updateBookingStatus(booking.booking_id, newStatus, currentUserId || 1);
             setActionDone(newStatus === "APPROVED" ? "Approved!" : "Rejected!");
             setTimeout(() => {
                 setActionDone(null);
@@ -102,6 +120,9 @@ export const BookingDetailModal: React.FC<BookingDetailModalProps> = ({
         REJECTED: { bg: "bg-rose-50", text: "text-rose-700", border: "border-rose-200" },
     };
     const sc = statusColors[booking.status] || statusColors.PENDING;
+
+    // Only allow deletion if user is admin OR if it's the user's own booking (and it's PENDING)
+    const canDelete = isAdmin || (booking.user?.user_id === currentUserId && booking.status === "PENDING");
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
@@ -175,81 +196,87 @@ export const BookingDetailModal: React.FC<BookingDetailModalProps> = ({
 
                 {/* Actions */}
                 <div className="px-6 pb-6 space-y-3">
-                    {/* Status Update Buttons */}
-                    {booking.status === "PENDING" && (
-                        <div className="flex gap-3">
-                            <button
-                                onClick={() => handleStatusUpdate("APPROVED")}
-                                disabled={updating}
-                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
-                            >
-                                <CheckCircle2 size={16} />
-                                {updating ? "Updating..." : "Approve"}
-                            </button>
-                            <button
-                                onClick={() => handleStatusUpdate("REJECTED")}
-                                disabled={updating}
-                                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-600 text-white rounded-lg text-sm font-semibold hover:bg-rose-700 transition-colors disabled:opacity-50"
-                            >
-                                <XCircle size={16} />
-                                {updating ? "Updating..." : "Reject"}
-                            </button>
-                        </div>
-                    )}
+                    {/* ADMIN ONLY: Status Update Buttons */}
+                    {isAdmin && (
+                        <>
+                            {booking.status === "PENDING" && (
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => handleStatusUpdate("APPROVED")}
+                                        disabled={updating}
+                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                                    >
+                                        <CheckCircle2 size={16} />
+                                        {updating ? "Updating..." : "Approve"}
+                                    </button>
+                                    <button
+                                        onClick={() => handleStatusUpdate("REJECTED")}
+                                        disabled={updating}
+                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-600 text-white rounded-lg text-sm font-semibold hover:bg-rose-700 transition-colors disabled:opacity-50"
+                                    >
+                                        <XCircle size={16} />
+                                        {updating ? "Updating..." : "Reject"}
+                                    </button>
+                                </div>
+                            )}
 
-                    {booking.status === "APPROVED" && (
-                        <button
-                            onClick={() => handleStatusUpdate("REJECTED")}
-                            disabled={updating}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg text-sm font-semibold hover:bg-rose-100 transition-colors disabled:opacity-50"
-                        >
-                            <XCircle size={16} />
-                            {updating ? "Updating..." : "Revoke Approval"}
-                        </button>
-                    )}
+                            {booking.status === "APPROVED" && (
+                                <button
+                                    onClick={() => handleStatusUpdate("REJECTED")}
+                                    disabled={updating}
+                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-lg text-sm font-semibold hover:bg-rose-100 transition-colors disabled:opacity-50"
+                                >
+                                    <XCircle size={16} />
+                                    {updating ? "Updating..." : "Revoke Approval"}
+                                </button>
+                            )}
 
-                    {booking.status === "REJECTED" && (
-                        <button
-                            onClick={() => handleStatusUpdate("APPROVED")}
-                            disabled={updating}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-sm font-semibold hover:bg-emerald-100 transition-colors disabled:opacity-50"
-                        >
-                            <CheckCircle2 size={16} />
-                            {updating ? "Updating..." : "Re-Approve"}
-                        </button>
+                            {booking.status === "REJECTED" && (
+                                <button
+                                    onClick={() => handleStatusUpdate("APPROVED")}
+                                    disabled={updating}
+                                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-sm font-semibold hover:bg-emerald-100 transition-colors disabled:opacity-50"
+                                >
+                                    <CheckCircle2 size={16} />
+                                    {updating ? "Updating..." : "Re-Approve"}
+                                </button>
+                            )}
+                        </>
                     )}
 
                     {/* Delete */}
-                    {!confirmDelete ? (
-                        <button
-                            onClick={() => setConfirmDelete(true)}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-lg text-sm font-medium transition-colors"
-                        >
-                            <Trash2 size={16} />
-                            Delete Booking
-                        </button>
-                    ) : (
-                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg space-y-3">
-                            <div className="flex items-center gap-2 text-sm text-red-700 font-medium">
-                                <AlertTriangle size={16} />
-                                Are you sure? This action cannot be undone.
+                    {canDelete && (
+                        !confirmDelete ? (
+                            <button
+                                onClick={() => setConfirmDelete(true)}
+                                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-slate-500 hover:text-red-600 hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-lg text-sm font-medium transition-colors"
+                            >
+                                <Trash2 size={16} />
+                                Delete Booking
+                            </button>
+                        ) : (
+                            <div className="p-3 bg-red-50 border border-red-200 rounded-lg space-y-3">
+                                <div className="flex items-center gap-2 text-sm text-red-700 font-medium">
+                                    <AlertTriangle size={16} />
+                                    Are you sure? This action cannot be undone.
+                                </div>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handleDelete}
+                                        disabled={deleting}
+                                        className="flex-1 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
+                                    >
+                                        {deleting ? "Deleting..." : "Yes, Delete"}
+                                    </button>
+                                    <button
+                                        onClick={() => setConfirmDelete(false)}
+                                        className="flex-1 py-2 bg-white text-slate-700 border border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                </div>
                             </div>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={handleDelete}
-                                    disabled={deleting}
-                                    className="flex-1 py-2 bg-red-600 text-white rounded-lg text-sm font-semibold hover:bg-red-700 disabled:opacity-50 transition-colors"
-                                >
-                                    {deleting ? "Deleting..." : "Yes, Delete"}
-                                </button>
-                                <button
-                                    onClick={() => setConfirmDelete(false)}
-                                    className="flex-1 py-2 bg-white text-slate-700 border border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </div>
+                        )
                     )}
                 </div>
             </div>

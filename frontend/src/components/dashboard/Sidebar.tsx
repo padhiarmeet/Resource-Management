@@ -35,7 +35,7 @@ const menuConfig: Record<string, { label: string; icon: React.ElementType; href:
         { label: "Schedule", icon: Calendar, href: "/dashboard/faculty/booking" },
         { label: "Resource Bank", icon: Box, href: "/dashboard/resource-bank" },
         { label: "Maintenance", icon: Wrench, href: "/dashboard/maintenance" },
-        { label: "Manage Users", icon: Users, href: "#" },
+        { label: "Manage Users", icon: Users, href: "/dashboard/admin/users" },
     ],
     FACULTY: [
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard/faculty" },
