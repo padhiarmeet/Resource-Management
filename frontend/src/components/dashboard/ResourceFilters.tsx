@@ -21,7 +21,7 @@ export const ResourceFilters: React.FC<ResourceFiltersProps> = ({
     buildings
 }) => {
     return (
-        <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="bg-white border border-slate-200 rounded-lg p-4 mb-6 flex flex-col md:flex-row gap-4 items-center justify-between">
 
             {/* Search */}
             <div className="relative w-full md:w-96">

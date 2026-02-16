@@ -111,7 +111,7 @@ export const ResourceDetailModal: React.FC<ResourceDetailModalProps> = ({ resour
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden">
 
                 {/* Header */}
                 <div className="p-6 border-b border-slate-100 flex justify-between items-start bg-slate-50/50">
@@ -198,7 +198,7 @@ export const ResourceDetailModal: React.FC<ResourceDetailModalProps> = ({ resour
                                 <div className="space-y-4">
                                     {cupboards.length > 0 ? (
                                         cupboards.map(cupboard => (
-                                            <div key={cupboard.cupboard_id} className="border border-slate-200 rounded-xl overflow-hidden">
+                                            <div key={cupboard.cupboard_id} className="border border-slate-200 rounded-lg overflow-hidden">
                                                 <div className="bg-slate-50 px-4 py-3 border-b border-slate-100 flex justify-between items-center">
                                                     <div className="font-semibold text-slate-700 flex items-center gap-2">
                                                         <Box size={16} /> {cupboard.cupboard_name}
@@ -242,7 +242,7 @@ export const ResourceDetailModal: React.FC<ResourceDetailModalProps> = ({ resour
                                 <div className="space-y-3">
                                     {maintenance.length > 0 ? (
                                         maintenance.map(m => (
-                                            <div key={m.maintenance_id} className="flex gap-3 p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
+                                            <div key={m.maintenance_id} className="flex gap-3 p-4 bg-white border border-slate-200 rounded-lg">
                                                 <div className="mt-0.5">
                                                     {m.status === "COMPLETED" ? (
                                                         <CheckCircle2 className="text-emerald-500" size={20} />

@@ -163,7 +163,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ open, onClose, onSubmit, buil
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
 
             {/* Modal */}
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative bg-white rounded-lg shadow-lg w-full max-w-lg mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-indigo-50 to-violet-50">
                     <div className="flex items-center gap-2">
@@ -189,7 +189,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ open, onClose, onSubmit, buil
                                 setSelectedResource("");
                             }}
                             required
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         >
                             <option value="">Select Building</option>
                             {buildings.map(b => (
@@ -208,7 +208,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ open, onClose, onSubmit, buil
                             onChange={e => setSelectedResource(Number(e.target.value) || "")}
                             required
                             disabled={!selectedBuilding}
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <option value="">
                                 {selectedBuilding ? "Select Resource" : "Select a building first"}
@@ -230,7 +230,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ open, onClose, onSubmit, buil
                             onChange={e => setType(e.target.value)}
                             required
                             placeholder="e.g. Electrical Repair, AC Servicing"
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         />
                     </div>
 
@@ -242,7 +242,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ open, onClose, onSubmit, buil
                             value={date}
                             onChange={e => setDate(e.target.value)}
                             required
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         />
                     </div>
 
@@ -254,7 +254,7 @@ const CreateModal: React.FC<CreateModalProps> = ({ open, onClose, onSubmit, buil
                             onChange={e => setNotes(e.target.value)}
                             placeholder="Additional details..."
                             rows={3}
-                            className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
                         />
                     </div>
 
@@ -263,14 +263,14 @@ const CreateModal: React.FC<CreateModalProps> = ({ open, onClose, onSubmit, buil
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors"
+                            className="flex-1 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
                             disabled={submitting || !selectedResource || !type || !date}
-                            className="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex-1 py-2.5 rounded-lg bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {submitting ? "Creating..." : "Create Record"}
                         </button>
@@ -317,7 +317,7 @@ const EditNotesModal: React.FC<EditNotesModalProps> = ({ open, record, onClose, 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                 <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
                     <h3 className="text-lg font-bold text-slate-800">Update Notes</h3>
                     <button onClick={onClose}><X size={18} className="text-slate-500" /></button>
@@ -328,11 +328,11 @@ const EditNotesModal: React.FC<EditNotesModalProps> = ({ open, record, onClose, 
                         onChange={e => setNotes(e.target.value)}
                         placeholder="Add resolution notes or updates..."
                         rows={5}
-                        className="w-full px-3 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none mb-4"
+                        className="w-full px-3 py-2.5 rounded-lg border border-slate-200 bg-slate-50 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none mb-4"
                     />
                     <div className="flex gap-3">
-                        <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50">Cancel</button>
-                        <button type="submit" disabled={submitting} className="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 disabled:opacity-50">
+                        <button type="button" onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50">Cancel</button>
+                        <button type="submit" disabled={submitting} className="flex-1 py-2.5 rounded-lg bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 disabled:opacity-50">
                             {submitting ? "Saving..." : "Save Notes"}
                         </button>
                     </div>
@@ -368,7 +368,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ open, record, onClose, onConf
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center">
             <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6 animate-in fade-in zoom-in-95 duration-200">
+            <div className="relative bg-white rounded-lg shadow-lg w-full max-w-sm mx-4 p-6 animate-in fade-in zoom-in-95 duration-200">
                 <div className="flex flex-col items-center text-center">
                     <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mb-4">
                         <Trash2 size={22} className="text-red-500" />
@@ -381,14 +381,14 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ open, record, onClose, onConf
                     <div className="flex gap-3 w-full">
                         <button
                             onClick={onClose}
-                            className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors"
+                            className="flex-1 py-2.5 rounded-lg border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             onClick={handleDelete}
                             disabled={deleting}
-                            className="flex-1 py-2.5 rounded-xl bg-red-600 text-white font-semibold text-sm hover:bg-red-700 transition-colors disabled:opacity-50"
+                            className="flex-1 py-2.5 rounded-lg bg-red-600 text-white font-semibold text-sm hover:bg-red-700 transition-colors disabled:opacity-50"
                         >
                             {deleting ? "Deleting..." : "Delete"}
                         </button>
@@ -402,7 +402,7 @@ const DeleteModal: React.FC<DeleteModalProps> = ({ open, record, onClose, onConf
 // ─── Skeleton Loader ───
 
 const SkeletonAccordion = () => (
-    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden animate-pulse">
+    <div className="bg-white border border-slate-200 rounded-lg overflow-hidden animate-pulse">
         <div className="p-4 flex items-center gap-3">
             <div className="w-10 h-10 bg-slate-100 rounded-lg" />
             <div className="flex-1">
@@ -539,14 +539,14 @@ export default function MaintenancePage() {
     // ─── Kanban Board View ───
 
     const KanbanColumn = ({ title, status, records, color }: { title: string, status: string, records: MaintenanceRecord[], color: string }) => (
-        <div className="flex-1 min-w-[300px] flex flex-col h-full bg-slate-100/50 rounded-2xl border border-slate-200">
-            <div className={`p-4 border-b border-slate-200 flex items-center justify-between rounded-t-2xl ${color}`}>
+        <div className="flex-1 min-w-[300px] flex flex-col h-full bg-slate-100/50 rounded-lg border border-slate-200">
+            <div className={`p-4 border-b border-slate-200 flex items-center justify-between rounded-t-lg ${color}`}>
                 <h3 className="font-bold text-slate-700">{title}</h3>
                 <span className="text-xs font-bold bg-white/50 px-2 py-0.5 rounded-full text-slate-600">{records.length}</span>
             </div>
             <div className="p-3 space-y-3 overflow-y-auto flex-1 custom-scrollbar">
                 {records.map(rec => (
-                    <div key={rec.maintenance_id} className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow group">
+                    <div key={rec.maintenance_id} className="bg-white p-4 rounded-lg border border-slate-200 hover:border-indigo-300 transition-colors group">
                         <div className="flex justify-between items-start mb-2">
                             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{rec.resource.building.building_name}</span>
                             <div className="relative">
@@ -624,17 +624,17 @@ export default function MaintenancePage() {
                                 <p className="text-slate-500 mt-1">Manage tasks, update status, and track repairs.</p>
                             </div>
                             <div className="flex items-center gap-3">
-                                <div className="bg-white border border-slate-200 p-1 rounded-xl flex items-center">
+                                <div className="bg-white border border-slate-200 p-1 rounded-lg flex items-center">
                                     <button
                                         onClick={() => setViewMode("list")}
-                                        className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-slate-100 text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+                                        className={`p-2 rounded-lg transition-all ${viewMode === "list" ? "bg-slate-100 text-slate-900" : "text-slate-400 hover:text-slate-600"}`}
                                         title="List View"
                                     >
                                         <ListIcon size={20} />
                                     </button>
                                     <button
                                         onClick={() => setViewMode("board")}
-                                        className={`p-2 rounded-lg transition-all ${viewMode === "board" ? "bg-slate-100 text-slate-900 shadow-sm" : "text-slate-400 hover:text-slate-600"}`}
+                                        className={`p-2 rounded-lg transition-all ${viewMode === "board" ? "bg-slate-100 text-slate-900" : "text-slate-400 hover:text-slate-600"}`}
                                         title="Board View"
                                     >
                                         <Layout size={20} />
@@ -642,7 +642,7 @@ export default function MaintenancePage() {
                                 </div>
                                 <button
                                     onClick={() => setCreateOpen(true)}
-                                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-indigo-200 transition-all transform hover:scale-105"
+                                    className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold transition-all"
                                 >
                                     <Plus size={20} />
                                     <span className="hidden sm:inline">Add Task</span>
@@ -653,7 +653,7 @@ export default function MaintenancePage() {
                         {/* Summary Stats (Only in List View or if needed) */}
                         {viewMode === "list" && (
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 shrink-0">
-                                <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center gap-4">
+                                <div className="bg-white border border-slate-200 rounded-lg p-4 flex items-center gap-4">
                                     <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center">
                                         <Wrench size={20} className="text-indigo-600" />
                                     </div>
@@ -662,7 +662,7 @@ export default function MaintenancePage() {
                                         <div className="text-xl font-bold text-slate-800">{loading ? "—" : totalRecords}</div>
                                     </div>
                                 </div>
-                                <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center gap-4">
+                                <div className="bg-white border border-slate-200 rounded-lg p-4 flex items-center gap-4">
                                     <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
                                         <Clock size={20} className="text-amber-600" />
                                     </div>
@@ -671,7 +671,7 @@ export default function MaintenancePage() {
                                         <div className="text-xl font-bold text-slate-800">{loading ? "—" : pendingCount}</div>
                                     </div>
                                 </div>
-                                <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex items-center gap-4">
+                                <div className="bg-white border border-slate-200 rounded-lg p-4 flex items-center gap-4">
                                     <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center">
                                         <CheckCircle2 size={20} className="text-green-600" />
                                     </div>
@@ -691,7 +691,7 @@ export default function MaintenancePage() {
                         ) : viewMode === "list" ? (
                             <div className="space-y-4 pb-8">
                                 {grouped.length === 0 ? (
-                                    <div className="flex flex-col items-center justify-center py-24 text-center bg-white border border-slate-200 border-dashed rounded-xl">
+                                    <div className="flex flex-col items-center justify-center py-24 text-center bg-white border border-slate-200 border-dashed rounded-lg">
                                         <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                                             <Building2 className="text-slate-300" size={32} />
                                         </div>
@@ -702,7 +702,7 @@ export default function MaintenancePage() {
                                     grouped.map(({ building, resources: resGroups, totalRecords: bTotal }) => {
                                         const isExpanded = expandedBuildings.has(building.building_id);
                                         return (
-                                            <div key={building.building_id} className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                                            <div key={building.building_id} className="bg-white border border-slate-200 rounded-lg overflow-hidden">
                                                 {/* Building Header */}
                                                 <button
                                                     onClick={() => toggleBuilding(building.building_id)}
@@ -744,7 +744,7 @@ export default function MaintenancePage() {
                                                                     {isResExpanded && (
                                                                         <div className="px-6 pb-4 space-y-2">
                                                                             {records.map(rec => (
-                                                                                <div key={rec.maintenance_id} className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl border border-slate-100 group">
+                                                                                <div key={rec.maintenance_id} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100 group">
                                                                                     <div className="flex-1 min-w-0">
                                                                                         <div className="flex items-center gap-2 flex-wrap">
                                                                                             <span className="font-semibold text-sm text-slate-800">{rec.maintenance_type}</span>

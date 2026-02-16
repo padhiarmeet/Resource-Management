@@ -126,10 +126,10 @@ export const BookingDetailModal: React.FC<BookingDetailModalProps> = ({
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden ring-1 ring-black/5">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-md overflow-hidden">
                 {/* Success Overlay */}
                 {actionDone && (
-                    <div className="absolute inset-0 z-10 bg-white/95 flex flex-col items-center justify-center rounded-2xl">
+                    <div className="absolute inset-0 z-10 bg-white/95 flex flex-col items-center justify-center rounded-lg">
                         <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-3 shadow-lg shadow-green-100/50">
                             <CheckCircle2 size={32} strokeWidth={3} />
                         </div>

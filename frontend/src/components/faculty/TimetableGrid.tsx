@@ -141,15 +141,15 @@ export const TimetableGrid: React.FC = () => {
     // Status badge styling
     const statusStyles: Record<string, { card: string; badge: string }> = {
         APPROVED: {
-            card: 'bg-emerald-50 border-emerald-200 hover:border-emerald-300 hover:shadow-md hover:shadow-emerald-100/50',
+            card: 'bg-emerald-50 border-emerald-200 hover:border-emerald-300',
             badge: 'bg-emerald-100 text-emerald-700',
         },
         PENDING: {
-            card: 'bg-amber-50 border-amber-200 hover:border-amber-300 hover:shadow-md hover:shadow-amber-100/50',
+            card: 'bg-amber-50 border-amber-200 hover:border-amber-300',
             badge: 'bg-amber-100 text-amber-700',
         },
         REJECTED: {
-            card: 'bg-rose-50 border-rose-200 hover:border-rose-300 hover:shadow-md hover:shadow-rose-100/50',
+            card: 'bg-rose-50 border-rose-200 hover:border-rose-300',
             badge: 'bg-rose-100 text-rose-700',
         },
     };
@@ -157,7 +157,7 @@ export const TimetableGrid: React.FC = () => {
     // Skeleton loader for timetable
     if (loading) {
         return (
-            <div className="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden animate-pulse">
+            <div className="bg-white rounded-lg shadow-none border border-slate-200 overflow-hidden animate-pulse">
                 {/* Skeleton Header */}
                 <div className="flex items-center justify-between p-4 border-b border-slate-200">
                     <div className="h-6 w-32 bg-slate-200 rounded"></div>
@@ -194,7 +194,7 @@ export const TimetableGrid: React.FC = () => {
 
     return (
         <>
-            <div className="bg-white rounded-md shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full">
+            <div className="bg-white rounded-lg shadow-none border border-slate-200 overflow-hidden flex flex-col h-full">
 
                 {/* Navigation Header */}
                 <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-white">
@@ -335,7 +335,7 @@ export const TimetableGrid: React.FC = () => {
                                             ) : (
                                                 <button
                                                     onClick={() => handleSlotClick(dayIdx, row)}
-                                                    className="w-full h-full rounded-md border border-slate-200 bg-white hover:border-indigo-400 hover:shadow-md hover:shadow-indigo-100/50 transition-all duration-200 group/slot flex flex-col items-center justify-center gap-2"
+                                                    className="w-full h-full rounded-md border border-slate-200 bg-white hover:border-indigo-400 transition-all duration-200 group/slot flex flex-col items-center justify-center gap-2"
                                                 >
                                                     <div className="w-10 h-10 rounded-full bg-slate-50 group-hover/slot:bg-indigo-50 text-slate-300 group-hover/slot:text-indigo-600 flex items-center justify-center transition-colors">
                                                         <Plus size={20} />

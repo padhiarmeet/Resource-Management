@@ -46,7 +46,7 @@ export const ResourceCard: React.FC<ResourceCardProps> = ({ resource, onClick })
     return (
         <div
             onClick={onClick}
-            className="group bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all cursor-pointer relative overflow-hidden"
+            className="group bg-white border border-slate-200 rounded-lg p-5 hover:border-indigo-300 transition-all cursor-pointer relative overflow-hidden"
         >
             {/* Hover Indicator */}
             <div className="absolute top-0 left-0 w-1 h-full bg-indigo-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-200"></div>

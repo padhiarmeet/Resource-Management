@@ -240,7 +240,7 @@ export default function UsersPage() {
             {/* User Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-md overflow-hidden">
+                    <div className="bg-white rounded-lg shadow-lg border border-slate-200 w-full max-w-md overflow-hidden">
                         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                             <h3 className="font-bold text-lg text-slate-800">
                                 {editingUser ? "Edit User" : "Add New User"}

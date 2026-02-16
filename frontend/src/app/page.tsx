@@ -2,297 +2,196 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/Button";
 import {
-    BookOpen,
     LayoutDashboard,
+    CalendarClock,
+    HardDrive,
+    ShieldCheck,
+    ArrowRight,
+    CheckCircle2,
     Users,
-    GraduationCap,
-    Clock,
-    HardDrive
+    Zap
 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { fetchBookings, fetchResources, fetchCupboards } from "@/lib/api";
+import { Button } from "@/components/ui/Button";
 
 export default function Home() {
-    const [stats, setStats] = useState({
-        liveNow: null as any,
-        approvedBookings: 0,
-        pendingBookings: 0,
-        emptySlots: 0, // This is hard to calculate without a fixed total, we'll use a placeholder or derived value
-        resourceCounts: {
-            Auditorium: 0,
-            Classroom: 0,
-            Lab: 0,
-            "Meeting Room": 0
-        },
-        totalResources: 0,
-        cupboardCount: 0
-    });
-
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function loadData() {
-            try {
-                const [bookings, resources, cupboards] = await Promise.all([
-                    fetchBookings(),
-                    fetchResources(),
-                    fetchCupboards()
-                ]);
-
-                // Process Bookings
-                const now = new Date();
-                let live = null;
-                let approved = 0;
-                let pending = 0;
-
-                bookings.forEach((b: any) => {
-                    const start = new Date(b.startDatetime);
-                    const end = new Date(b.endDatetime);
-
-                    if (b.status === "APPROVED") approved++;
-                    if (b.status === "PENDING") pending++;
-
-                    if (b.status === "APPROVED" && now >= start && now <= end) {
-                        live = b;
-                    }
-                });
-
-                // Process Resources
-                const counts: any = { Auditorium: 0, Classroom: 0, Lab: 0, "Meeting Room": 0 };
-                resources.forEach((r: any) => {
-                    // Adjust type matching based on actual DB values (e.g., "Classroom", "Laboratory")
-                    const type = r.resourceType?.type_name || "Unknown";
-                    // Simple fuzzy matching or direct mapping
-                    if (type.includes("Classroom")) counts.Classroom++;
-                    else if (type.includes("Lab")) counts.Lab++;
-                    else if (type.includes("Auditorium")) counts.Auditorium++;
-                    else if (type.includes("Meeting")) counts["Meeting Room"]++;
-                });
-
-                setStats({
-                    liveNow: live,
-                    approvedBookings: approved,
-                    pendingBookings: pending,
-                    emptySlots: 5, // Placeholder/Mock for now as "Empty" implies unbooked slots in a schedule, which is complex
-                    resourceCounts: counts,
-                    totalResources: resources.length,
-                    cupboardCount: cupboards.length
-                });
-
-            } catch (error) {
-                console.error("Failed to load dashboard data", error);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        loadData();
-    }, []);
-
-    // Helper to format time
-    const formatTime = (dateStr: string) => {
-        return new Date(dateStr).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    };
-
     return (
-        <main className="min-h-screen flex items-center justify-center p-4 lg:p-8 font-sans text-slate-900">
+        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700">
 
-            {/* Main Container - The "Glass" Card effect */}
-            <div className="w-full max-w-[1400px] min-h-[85vh] bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-slate-200">
+            {/* ─── Navbar ─── */}
+            <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60">
+                <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Image src="/app_logo.png" alt="OpenSlot Logo" width={32} height={32} className="rounded-lg shadow-sm" />
+                        <span className="text-lg font-bold tracking-tight text-slate-900">OpenSlot</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">
+                            Log in
+                        </Link>
+                        <Link href="/signup">
+                            <Button className="rounded-full px-5 py-2 h-auto text-sm bg-slate-900 hover:bg-slate-800 text-white shadow-lg shadow-slate-900/10 hover:shadow-xl transition-all hover:-translate-y-0.5">
+                                Get Started
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
+            </nav>
 
-                {/* LEFT SIDE: Action Area (Login/Signup) */}
-                <div className="w-full lg:w-[40%] p-12 lg:p-20 flex flex-col justify-center relative z-10">
+            {/* ─── Global Background Ripple ─── */}
+            <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex items-center justify-center">
+                <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] opacity-40">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60%] h-[60%] border border-indigo-500/30 rounded-full animate-pulse"></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] border border-indigo-500/20 rounded-full animate-pulse delay-700"></div>
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100%] h-[100%] border border-indigo-500/10 rounded-full animate-pulse delay-1000"></div>
+                </div>
+            </div>
 
-                    {/* Logo / Brand */}
-                    <div className="flex items-center gap-3 mb-12">
-                        <Image src="/app_logo.png" alt="OpenSlot Logo" width={48} height={48} />
-                        <span className="text-xl font-bold tracking-tight text-slate-900">OpenSlot</span>
+            {/* ─── Hero Section ─── */}
+            <section className="pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 overflow-hidden relative z-10">
+
+                {/* Background Blobs */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-tr from-indigo-100/40 to-violet-100/40 rounded-[100%] blur-3xl -z-10 pointer-events-none" />
+
+                <div className="max-w-4xl mx-auto text-center relative z-10">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200 shadow-sm mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <span className="flex h-2 w-2 rounded-full bg-indigo-500"></span>
+                        <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">v2.0 Now Available</span>
                     </div>
 
-                    {/* Hero Text */}
-                    <h1 className="text-5xl font-extrabold tracking-tight mb-6 leading-[1.1]">
-                        Campus life, <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 to-pink-500">
-                            organized.
+                    <h1 className="text-5xl lg:text-7xl font-extrabold tracking-tight text-slate-900 mb-8 leading-[1.1] animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+                        Campus management, <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 animate-gradient bg-300%">
+                            reimagined.
                         </span>
                     </h1>
 
-                    <p className="text-slate-500 text-lg mb-10 max-w-md leading-relaxed">
-                        The central hub for faculties and students. Manage lecture schedules, digital cupboards, and library assets in one dashboard.
+                    <p className="text-lg lg:text-xl text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
+                        The all-in-one platform for faculties and students. Streamline bookings, manage resources, and track acadmic schedules in one beautiful dashboard.
                     </p>
 
-                    {/* THE BUTTONS - Main Focus */}
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-300">
                         <Link href="/login" className="w-full sm:w-auto">
-                            <Button className="w-full h-14 px-8 text-lg rounded-full bg-slate-900 hover:bg-slate-800 text-white shadow-xl shadow-slate-900/10 transition-all hover:scale-[1.02]">
-                                Login to Portal
+                            <Button className="w-full sm:w-auto px-8 py-6 text-lg rounded-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl shadow-indigo-200 hover:shadow-indigo-300 transition-all hover:-translate-y-0.5">
+                                Launch Dashboard
+                                <ArrowRight className="ml-2 w-5 h-5" />
                             </Button>
                         </Link>
-                        <Link href="/signup" className="w-full sm:w-auto">
-                            <Button variant="outline" className="w-full h-14 px-8 text-lg rounded-full border-2 border-slate-200 hover:border-slate-300 bg-transparent text-slate-700 hover:bg-slate-50 transition-all">
-                                New Account
+                        <Link href="/#features" className="w-full sm:w-auto">
+                            <Button variant="outline" className="w-full sm:w-auto px-8 py-6 text-lg rounded-full bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-all hover:-translate-y-0.5">
+                                View Features
                             </Button>
                         </Link>
-                    </div>
-
-                    {/* Footer Text */}
-                    <div className="mt-12 flex items-center gap-4 text-xs font-medium text-slate-400">
-                        <span>Faculties</span>
-                        <span className="h-1 w-1 rounded-full bg-slate-300"></span>
-                        <span>Students</span>
-                        <span className="h-1 w-1 rounded-full bg-slate-300"></span>
-                        <span>Admin</span>
                     </div>
                 </div>
+            </section>
 
-                {/* RIGHT SIDE: The Visual */}
-                <div className="hidden lg:flex w-[60%] bg-[#F8FAFC] relative p-12 items-center justify-center overflow-hidden">
+            {/* ─── Bento Grid Features ─── */}
+            <section id="features" className="py-20 lg:py-32 px-6 relative z-10">
+                <div className="max-w-6xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Everything you need to run your department</h2>
+                        <p className="text-slate-500 max-w-xl mx-auto">Powerful tools designed for the modern educational ecosystem.</p>
+                    </div>
 
-                    {/* Abstract Background Blobs */}
-                    <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-violet-100/50 rounded-full blur-3xl"></div>
-                    <div className="absolute bottom-[-10%] left-[10%] w-[400px] h-[400px] bg-pink-100/50 rounded-full blur-3xl"></div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                        {/* Feature 1 */}
+                        <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group">
+                            <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <CalendarClock className="w-6 h-6 text-indigo-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-3">Smart Scheduling</h3>
+                            <p className="text-slate-500 leading-relaxed">
+                                Book lecture halls, labs, and meeting rooms instantly. Conflict detection ensures zero overlap.
+                            </p>
+                        </div>
 
-                    {/* THE DASHBOARD MOCKUP */}
-                    <div className="relative w-full max-w-[800px] aspect-[16/10] bg-white rounded-3xl shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] border border-slate-200/60 p-2 flex overflow-hidden">
+                        {/* Feature 2 */}
+                        <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl hover:border-violet-100 transition-all duration-300 group">
+                            <div className="w-12 h-12 bg-violet-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <HardDrive className="w-6 h-6 text-violet-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-3">Resource Management</h3>
+                            <p className="text-slate-500 leading-relaxed">
+                                Track every asset from projectors to lab equipment. Digital cupboards keep inventory organized.
+                            </p>
+                        </div>
 
-                        {/* 1. Sidebar */}
-                        <div className="w-20 bg-[#1A1F2C] rounded-2xl flex flex-col items-center py-8 gap-8 shrink-0 text-slate-400">
-                            <div className="p-2 bg-slate-800 rounded-lg text-white"><LayoutDashboard size={20} /></div>
-                            <div className="flex flex-col gap-6 w-full items-center">
-                                <div className="p-2 hover:text-white cursor-pointer"><Users size={20} /></div>
-                                <div className="p-2 text-white bg-white/10 rounded-lg"><BookOpen size={20} /></div>
-                                <div className="p-2 hover:text-white cursor-pointer"><GraduationCap size={20} /></div>
+                        {/* Feature 3 */}
+                        <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm hover:shadow-xl hover:border-fuchsia-100 transition-all duration-300 group">
+                            <div className="w-12 h-12 bg-fuchsia-50 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <ShieldCheck className="w-6 h-6 text-fuchsia-600" />
+                            </div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-3">Role-Based Access</h3>
+                            <p className="text-slate-500 leading-relaxed">
+                                Granular permissions for Admins, Faculties, and Students. Secure and tailored experiences.
+                            </p>
+                        </div>
+
+                        {/* Feature 4 (Spans 2 cols on desktop) */}
+                        <div className="md:col-span-2 bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 lg:p-10 border border-slate-700 shadow-lg text-white relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:bg-indigo-500/30 transition-colors"></div>
+
+                            <div className="relative z-10">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 mb-6 backdrop-blur-sm">
+                                    <Zap className="w-4 h-4 text-yellow-400" />
+                                    <span className="text-xs font-semibold text-white/90 uppercase tracking-wide">Real-time</span>
+                                </div>
+                                <h3 className="text-2xl font-bold mb-4">Live Dashboard Analytics</h3>
+                                <p className="text-slate-300 max-w-lg mb-8 text-lg">
+                                    Get instant insights into resource utilization, active sessions, and pending approvals. Decisions made data-driven.
+                                </p>
+
+                                <div className="grid grid-cols-3 gap-4 border-t border-white/10 pt-8">
+                                    <div>
+                                        <div className="text-3xl font-bold text-white mb-1">99%</div>
+                                        <div className="text-sm text-slate-400">Uptime</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-3xl font-bold text-white mb-1">24/7</div>
+                                        <div className="text-sm text-slate-400">Access</div>
+                                    </div>
+                                    <div>
+                                        <div className="text-3xl font-bold text-white mb-1">500+</div>
+                                        <div className="text-sm text-slate-400">Resources</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        {/* 2. Main Content Area */}
-                        <div className="flex-1 p-6 flex flex-col gap-6 bg-white rounded-r-2xl">
-
-                            {/* Header */}
-                            <div className="flex justify-between items-center">
-                                <div>
-                                    <h3 className="text-xl font-bold text-slate-800">Resource Dashboard</h3>
-                                    <p className="text-xs text-slate-400">Welcome back, Professor.</p>
-                                </div>
-                                <div className="flex gap-2">
-                                    <span className="px-4 py-2 rounded-full bg-slate-100 text-xs font-semibold text-slate-600">Academic Year 2026</span>
-                                </div>
-                            </div>
-
-                            {/* Bento Grid */}
-                            <div className="grid grid-cols-3 grid-rows-2 gap-4 h-full">
-
-                                {/* Card: Current Lecture (Takes 2 cols) */}
-                                <div className="col-span-2 bg-[#F3F5F7] rounded-[1.5rem] p-5 flex flex-col justify-between group hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200">
-                                    <div className="flex justify-between items-start">
-                                        <div className="p-2 bg-white rounded-full shadow-sm text-pink-500"><Clock size={18} /></div>
-                                        {stats.liveNow ? (
-                                            <span className="bg-slate-900 text-white text-[10px] px-2 py-1 rounded-full">Live Now</span>
-                                        ) : (
-                                            <span className="bg-slate-300 text-slate-600 text-[10px] px-2 py-1 rounded-full">No Active Session</span>
-                                        )}
-                                    </div>
-                                    <div>
-                                        {stats.liveNow ? (
-                                            <>
-                                                <h4 className="text-3xl font-bold text-slate-800 mb-1">{formatTime(stats.liveNow.startDatetime)}</h4>
-                                                <p className="text-sm text-slate-500 font-medium">
-                                                    {stats.liveNow.resource?.resource_name || "Unknown Resource"} • {stats.liveNow.user?.name || "Faculty"}
-                                                </p>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <h4 className="text-3xl font-bold text-slate-800 mb-1">--:--</h4>
-                                                <p className="text-sm text-slate-500 font-medium">No sessions currently running.</p>
-                                            </>
-                                        )}
-                                    </div>
-                                    {/* Fake timeline bars */}
-                                    <div className="flex gap-1 h-2 mt-4">
-                                        <div className="w-1/3 bg-pink-400 rounded-full"></div>
-                                        <div className="w-2/3 bg-slate-200 rounded-full"></div>
-                                    </div>
-                                </div>
-
-                                {/* Card: Storage / Cupboard */}
-                                <div className="col-span-1 bg-[#1A1F2C] rounded-[1.5rem] p-5 text-white flex flex-col justify-between relative overflow-hidden">
-                                    {/* Decorative blob */}
-                                    <div className="absolute top-[-20px] right-[-20px] w-20 h-20 bg-blue-500 blur-2xl opacity-40"></div>
-
-                                    <div className="flex items-center gap-2 text-slate-300">
-                                        <HardDrive size={16} />
-                                        <span className="text-xs font-semibold">Cupboards</span>
-                                    </div>
-                                    <div>
-                                        <div className="text-2xl font-bold mb-1">{stats.cupboardCount}</div>
-                                        <div className="text-[10px] text-slate-400">Total Storage Units</div>
-                                    </div>
-                                    <div className="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                                        <div className="bg-blue-400 h-full w-[60%]"></div>
-                                    </div>
-                                </div>
-
-                                {/* Card: Resource Types (Auditorium, Classroom, Lab) */}
-                                <div className="col-span-1 bg-white border border-slate-100 rounded-[1.5rem] p-5 flex flex-col justify-between">
-                                    <div className="text-sm font-semibold text-slate-600 mb-3">Resource Types</div>
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex items-center justify-between text-xs">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-2 h-2 rounded-full bg-violet-500"></div>
-                                                <span className="text-slate-700">Auditorium</span>
-                                            </div>
-                                            <span className="font-bold text-slate-900">{stats.resourceCounts.Auditorium}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between text-xs">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                                                <span className="text-slate-700">Classroom</span>
-                                            </div>
-                                            <span className="font-bold text-slate-900">{stats.resourceCounts.Classroom}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between text-xs">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-2 h-2 rounded-full bg-pink-500"></div>
-                                                <span className="text-slate-700">Lab</span>
-                                            </div>
-                                            <span className="font-bold text-slate-900">{stats.resourceCounts.Lab}</span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-2 text-xs text-slate-400 text-right">Total: {stats.totalResources}</div>
-                                </div>
-
-                                {/* Card: Booking Status (Pending, Approved, Empty) */}
-                                <div className="col-span-2 bg-[#F3F5F7] rounded-[1.5rem] p-5 flex flex-col justify-between">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <h4 className="font-bold text-slate-800">Booking Status</h4>
-                                        <button className="text-xs text-indigo-600 font-medium hover:underline">Manage</button>
-                                    </div>
-                                    <div className="grid grid-cols-3 gap-3">
-                                        {/* Approved */}
-                                        <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-1">
-                                            <div className="text-lg font-bold text-green-600">{stats.approvedBookings}</div>
-                                            <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Approved</div>
-                                        </div>
-                                        {/* Pending */}
-                                        <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-1">
-                                            <div className="text-lg font-bold text-amber-500">{stats.pendingBookings}</div>
-                                            <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Pending</div>
-                                        </div>
-                                        {/* Empty/Available */}
-                                        <div className="bg-white p-3 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center justify-center gap-1">
-                                            <div className="text-lg font-bold text-slate-400">{stats.emptySlots}</div>
-                                            <div className="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Empty</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
+                        {/* Feature 5 */}
+                        <div className="bg-indigo-50 rounded-3xl p-8 border border-indigo-100 flex flex-col justify-center items-center text-center">
+                            <h3 className="text-xl font-bold text-indigo-900 mb-2">Ready to modernize?</h3>
+                            <p className="text-indigo-600/80 mb-6 text-sm">Join hundreds of faculties today.</p>
+                            <Link href="/signup">
+                                <Button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white shadow-md rounded-xl py-6">
+                                    Create Free Account
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                 </div>
-            </div>
-        </main>
+            </section>
+
+            {/* ─── Footer ─── */}
+            <footer className="bg-white border-t border-slate-200 py-12 px-6 relative z-10">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="flex items-center gap-3">
+                        <Image src="/app_logo.png" alt="OpenSlot Logo" width={24} height={24} className="rounded-md shadow-sm" />
+                        <span className="font-semibold text-slate-700">OpenSlot</span>
+                    </div>
+
+                    <div className="flex gap-8 text-sm text-slate-500">
+                        <a href="#" className="hover:text-slate-900 transition-colors">Privacy</a>
+                        <a href="#" className="hover:text-slate-900 transition-colors">Terms</a>
+                        <a href="#" className="hover:text-slate-900 transition-colors">Support</a>
+                    </div>
+
+                    <div className="text-sm text-slate-400">
+                        © 2026 OpenSlot System. All rights reserved.
+                    </div>
+                </div>
+            </footer>
+        </div>
     );
 }

@@ -118,7 +118,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh] ring-1 ring-white/20">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
 
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white relative">
@@ -183,7 +183,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
                                             <button
                                                 key={building.building_id}
                                                 onClick={() => handleBuildingSelect(building)}
-                                                className="group relative flex flex-col items-start p-5 bg-white border border-slate-200 rounded-2xl hover:border-indigo-500 hover:ring-4 hover:ring-indigo-50/50 transition-all duration-200 text-left shadow-sm hover:shadow-lg"
+                                                className="group relative flex flex-col items-start p-5 bg-white border border-slate-200 rounded-lg hover:border-indigo-500 transition-all duration-200 text-left"
                                             >
                                                 <div className="absolute top-5 right-5 text-slate-300 group-hover:text-indigo-500 transition-colors">
                                                     <ArrowRight size={20} className="-translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
@@ -229,7 +229,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
                                                 key={type.resource_type_id}
                                                 onClick={() => handleResourceTypeSelect(type)}
                                                 disabled={submitting}
-                                                className="group flex items-center gap-4 p-5 bg-white border border-slate-200 rounded-2xl hover:border-fuchsia-500 hover:ring-4 hover:ring-fuchsia-50/50 transition-all duration-200 text-left shadow-sm hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="group flex items-center gap-4 p-5 bg-white border border-slate-200 rounded-lg hover:border-fuchsia-500 transition-all duration-200 text-left disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
                                                 <div className="p-3 bg-gradient-to-br from-fuchsia-50 to-pink-50 text-fuchsia-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
                                                     <Layers size={22} />

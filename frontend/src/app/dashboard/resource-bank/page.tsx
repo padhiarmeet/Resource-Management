@@ -90,7 +90,7 @@ export default function ResourceBankPage() {
                             <p className="text-slate-500 mt-2">Browse and manage all campus resources, facilities, and storage units.</p>
                         </div>
 
-                        <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-indigo-200 transition-all transform hover:scale-105">
+                        <button className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg font-semibold transition-all">
                             <Plus size={20} />
                             Add Resource
                         </button>
@@ -106,7 +106,7 @@ export default function ResourceBankPage() {
                     {loading ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
-                                <div key={n} className="h-48 bg-white border border-slate-200 rounded-xl shadow-sm animate-pulse"></div>
+                                <div key={n} className="h-48 bg-white border border-slate-200 rounded-lg animate-pulse"></div>
                             ))}
                         </div>
                     ) : (
@@ -122,7 +122,7 @@ export default function ResourceBankPage() {
                                     ))}
                                 </div>
                             ) : (
-                                <div className="flex flex-col items-center justify-center py-24 text-center bg-white border border-slate-200 border-dashed rounded-xl">
+                                <div className="flex flex-col items-center justify-center py-24 text-center bg-white border border-slate-200 border-dashed rounded-lg">
                                     <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                                         <Archive className="text-slate-300" size={32} />
                                     </div>
