@@ -13,7 +13,6 @@ import com.project.resource_management.Repository.BookingsRepo;
 import com.project.resource_management.Repository.ResourcesRepo;
 import com.project.resource_management.Repository.UsersRepo;
 
-
 @Service
 public class BookingService {
 
@@ -33,7 +32,7 @@ public class BookingService {
     public Bookings getBookingById(int id) {
         return bookingRepo.findById(id).orElse(null);
     }
-  
+
     public List<Bookings> getBookingsByUserId(int userId) {
         return bookingRepo.findByUser_UserId(userId);
     }
@@ -42,9 +41,11 @@ public class BookingService {
         return bookingRepo.findByStatus("PENDING");
     }
 
-    public Bookings createBooking(Bookings booking, int userId, int resourceId) {
-        
-        
+    @Autowired
+    private com.project.resource_management.Repository.ShelfRepo shelfRepo;
+
+    public Bookings createBooking(Bookings booking, int userId, int resourceId, Integer shelfId) {
+
         if (booking.getStartDatetime().isAfter(booking.getEndDatetime())) {
             throw new RuntimeException("Start time must be before End time");
         }
@@ -53,42 +54,68 @@ public class BookingService {
             throw new RuntimeException("Cannot book in the past");
         }
 
-        //Check Is the room free ?
-        List<Bookings> conflicts = bookingRepo.findConflictingBookings(
-            resourceId, 
-            booking.getStartDatetime(), 
-            booking.getEndDatetime()
-        );
-        
-        //It means that already one meeting exist in that slot 
-        if (!conflicts.isEmpty()) {
-            throw new RuntimeException("Resource is already booked for this time slot!");
+        if (shelfId != null) {
+            // Check Is the shelf free?
+            List<Bookings> conflicts = bookingRepo.findConflictingShelfBookings(
+                    shelfId,
+                    booking.getStartDatetime(),
+                    booking.getEndDatetime());
+
+            if (!conflicts.isEmpty()) {
+                throw new RuntimeException("Shelf is already booked for this time slot!");
+            }
+
+            com.project.resource_management.Model.Shelf shelf = shelfRepo.findById(shelfId)
+                    .orElseThrow(() -> new RuntimeException("Shelf not found"));
+            booking.setShelf(shelf);
+
+            // If booking a shelf, we still link the resource (Cupboard's resource) or maybe
+            // just kept resourceId passed?
+            // Usually good to keep the resource link for easier querying
+            Resources resource = resourceRepo.findById(resourceId)
+                    .orElseThrow(() -> new RuntimeException("Resource not found"));
+            booking.setResource(resource);
+
+        } else {
+            // Check Is the room free ?
+            List<Bookings> conflicts = bookingRepo.findConflictingBookings(
+                    resourceId,
+                    booking.getStartDatetime(),
+                    booking.getEndDatetime());
+
+            // It means that already one meeting exist in that slot
+            if (!conflicts.isEmpty()) {
+                throw new RuntimeException("Resource is already booked for this time slot!");
+            }
+
+            Resources resource = resourceRepo.findById(resourceId)
+                    .orElseThrow(() -> new RuntimeException("Resource not found"));
+            booking.setResource(resource);
         }
 
         Users user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("Users not found"));
-        Resources resource = resourceRepo.findById(resourceId).orElseThrow(() -> new RuntimeException("Resource not found"));
-        
+
         booking.setUser(user);
-        booking.setResource(resource);
         booking.setStatus("PENDING");
 
         return bookingRepo.save(booking);
     }
 
-    // Approve or reject Bookings  
+    // Approve or reject Bookings
     public Bookings updateBookingStatus(int bookingId, String newStatus, int approverId) {
         Bookings booking = bookingRepo.findById(bookingId).orElse(null);
-        
+
         if (booking != null) {
-           
+
             if (!newStatus.equals("APPROVED") && !newStatus.equals("REJECTED")) {
                 throw new RuntimeException("Invalid Status. Use APPROVED or REJECTED.");
             }
-            
+
             booking.setStatus(newStatus);
 
             // Set approver (Who want to book that !) / (who clicked button !)
-            Users approver = userRepo.findById(approverId).orElseThrow(() -> new RuntimeException("Approver not found"));
+            Users approver = userRepo.findById(approverId)
+                    .orElseThrow(() -> new RuntimeException("Approver not found"));
             booking.setApprover(approver);
 
             return bookingRepo.save(booking);

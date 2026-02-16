@@ -26,10 +26,13 @@ public class Bookings {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int booking_id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "resource_id", nullable = false)
+    @JoinColumn(name = "resource_id", nullable = true)
     private Resources resource;
 
-  
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shelf_id", nullable = true)
+    private Shelf shelf;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
@@ -41,7 +44,7 @@ public class Bookings {
     private LocalDateTime endDatetime;
 
     @Column(name = "status", length = 20)
-    private String status; 
+    private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approver_id")
@@ -49,7 +52,6 @@ public class Bookings {
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-
 
     @PrePersist
     protected void onCreate() {

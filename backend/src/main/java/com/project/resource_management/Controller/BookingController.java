@@ -56,7 +56,7 @@ public class BookingController {
             newBookings.setEndDatetime(dataFromBody.getEnd_datetime());
 
             Bookings savedBookings = bookingService.createBooking(newBookings, dataFromBody.getUser_id(),
-                    dataFromBody.getResource_id());
+                    dataFromBody.getResource_id(), dataFromBody.getShelf_id());
 
             return new ResponseEntity<>(savedBookings, HttpStatus.CREATED);
         } catch (RuntimeException runtimeException) {

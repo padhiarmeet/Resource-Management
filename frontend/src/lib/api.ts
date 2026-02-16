@@ -50,6 +50,7 @@ export async function fetchResourceTypes() {
 export interface BookingRequestPayload {
     user_id: number;
     resource_id: number;
+    shelf_id?: number;
     start_datetime: string; // ISO format: "2026-02-10T07:45:00"
     end_datetime: string;
 }
