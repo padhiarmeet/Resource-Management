@@ -19,6 +19,7 @@ import {
     Monitor,
     AlertTriangle,
     Users,
+    Map,
 } from "lucide-react";
 
 interface UserData {
@@ -34,6 +35,7 @@ const menuConfig: Record<string, { label: string; icon: React.ElementType; href:
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
         { label: "Schedule", icon: Calendar, href: "/dashboard/faculty/booking" },
         { label: "Resource Bank", icon: Box, href: "/dashboard/resource-bank" },
+        { label: "Campus Map", icon: Map, href: "/dashboard/map" },
         { label: "Maintenance", icon: Wrench, href: "/dashboard/maintenance" },
         { label: "Manage Users", icon: Users, href: "/dashboard/admin/users" },
     ],
@@ -41,12 +43,14 @@ const menuConfig: Record<string, { label: string; icon: React.ElementType; href:
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard/faculty" },
         { label: "My Schedule", icon: Calendar, href: "/dashboard/faculty/booking" },
         { label: "Resource Bank", icon: Box, href: "/dashboard/resource-bank" },
+        { label: "Campus Map", icon: Map, href: "/dashboard/map" },
         { label: "Report Issue", icon: AlertTriangle, href: "/dashboard/maintenance" },
     ],
     STUDENT: [
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard/student" },
         { label: "My Timetable", icon: BookOpen, href: "#" },
         { label: "Resource Availability", icon: Monitor, href: "/dashboard/resource-bank" },
+        { label: "Campus Map", icon: Map, href: "/dashboard/map" },
     ],
     MAINTENANCE: [
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard/maintenance" },
@@ -55,7 +59,7 @@ const menuConfig: Record<string, { label: string; icon: React.ElementType; href:
     ],
 };
 
-export const Sidebar: React.FC = () => {
+export const Sidebar: React.FC<{ className?: string }> = ({ className = "" }) => {
     const pathname = usePathname();
     const router = useRouter();
     const [user, setUser] = useState<UserData | null>(null);
@@ -80,7 +84,7 @@ export const Sidebar: React.FC = () => {
     };
 
     return (
-        <div className="h-screen w-64 bg-white border-r border-slate-200 flex flex-col fixed left-0 top-0 z-50">
+        <div className={`h-screen w-64 bg-white border-r border-slate-200 flex flex-col fixed left-0 top-0 z-50 ${className}`}>
             {/* Logo Area */}
             <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-100">
                 <Image src="/app_logo.png" alt="OpenSlot Logo" width={40} height={40} />
