@@ -108,7 +108,7 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className = "" }) =>
                 <div className="my-4 h-px bg-slate-100 mx-3"></div>
 
                 <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Account</div>
-                <NavItem icon={User} label="Profile" href="#" active={false} />
+                <NavItem icon={User} label="Profile" href="/dashboard/profile" active={pathname === "/dashboard/profile"} />
                 <NavItem icon={Bell} label="Notifications" badge="3" href="#" active={false} />
                 <NavItem icon={Settings} label="Settings" href="#" active={false} />
             </nav>

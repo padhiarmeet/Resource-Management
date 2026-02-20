@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -30,6 +31,40 @@ public class UsersController {
     @GetMapping("/")
     public ResponseEntity<List<Users>> getAllUsers() {
         return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable int id) {
+        Users user = service.getUserBYId(id);
+        if (user != null && user.getUserId() != 0) {
+            user.setPassword(null);
+            return new ResponseEntity<>(user, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public static class ChangePasswordRequest {
+        public String currentPassword;
+        public String newPassword;
+    }
+
+    @PatchMapping("/{id}/change-password")
+    public ResponseEntity<?> changePassword(@PathVariable int id, @RequestBody ChangePasswordRequest req) {
+        try {
+            Users existing = service.getUserBYId(id);
+            if (existing == null || existing.getUserId() == 0) {
+                return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+            }
+            if (!existing.getPassword().equals(req.currentPassword)) {
+                return new ResponseEntity<>("Current password is incorrect", HttpStatus.UNAUTHORIZED);
+            }
+            existing.setPassword(req.newPassword);
+            service.addUser(existing);
+            return new ResponseEntity<>("Password updated successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/")
