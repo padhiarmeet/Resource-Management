@@ -110,7 +110,7 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className = "" }) =>
                 <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">Account</div>
                 <NavItem icon={User} label="Profile" href="/dashboard/profile" active={pathname === "/dashboard/profile"} />
                 <NavItem icon={Bell} label="Notifications" badge="3" href="#" active={false} />
-                <NavItem icon={Settings} label="Settings" href="#" active={false} />
+                <NavItem icon={Settings} label="Settings" href="/dashboard/settings" active={pathname === "/dashboard/settings"} />
             </nav>
 
             {/* User Info & Bottom Actions */}
@@ -126,14 +126,6 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className = "" }) =>
                         </div>
                     </div>
                 )}
-                <NavItem icon={HelpCircle} label="Help Center" href="#" active={false} />
-                <button
-                    onClick={handleSignOut}
-                    className="flex items-center gap-3 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors mt-1 font-medium"
-                >
-                    <LogOut size={16} />
-                    <span>Sign Out</span>
-                </button>
             </div>
         </div>
     );

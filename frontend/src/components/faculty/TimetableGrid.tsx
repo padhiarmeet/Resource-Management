@@ -4,7 +4,13 @@ import React, { useEffect, useState } from 'react';
 import { BookingModal } from './BookingModal';
 import { BookingDetailModal } from './BookingDetailModal';
 import { Clock, Calendar, Plus, Coffee, UserCircle2, CheckCircle, Timer } from 'lucide-react';
-import { fetchBookings } from '@/lib/api';
+import { fetchBookings, fetchBuildings } from '@/lib/api';
+
+// Also add a Building interface at the top
+interface Building {
+    building_id: number;
+    building_name: string;
+}
 
 interface Booking {
     booking_id: number;
@@ -27,6 +33,8 @@ export const TimetableGrid: React.FC = () => {
     const [selectedSlot, setSelectedSlot] = useState<{ date: string, startTime: string, endTime: string, dayName: string } | null>(null);
     const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
     const [bookings, setBookings] = useState<Booking[]>([]);
+    const [buildings, setBuildings] = useState<Building[]>([]);
+    const [selectedBuildingId, setSelectedBuildingId] = useState<number | 'ALL'>('ALL');
     const [loading, setLoading] = useState(true);
 
     // State for current week view
@@ -50,10 +58,14 @@ export const TimetableGrid: React.FC = () => {
     const loadBookings = async () => {
         setLoading(true);
         try {
-            const data = await fetchBookings();
-            setBookings(data);
+            const [bookingsData, buildingsData] = await Promise.all([
+                fetchBookings(),
+                fetchBuildings()
+            ]);
+            setBookings(bookingsData);
+            setBuildings(buildingsData);
         } catch (error) {
-            console.error("Failed to load bookings", error);
+            console.error("Failed to load data", error);
         } finally {
             setLoading(false);
         }
@@ -77,7 +89,17 @@ export const TimetableGrid: React.FC = () => {
         return bookings.find(b => {
             const bookingStart = b.startDatetime;
             const slotStart = `${date}T${startTime}:00`;
-            return bookingStart === slotStart;
+
+            // Check time match
+            if (bookingStart !== slotStart) return false;
+
+            // Filter by building down here
+            if (selectedBuildingId !== 'ALL') {
+                if (b.resource?.building?.building_name !== buildings.find(bldg => bldg.building_id === selectedBuildingId)?.building_name) {
+                    return false;
+                }
+            }
+            return true;
         });
     };
 
@@ -207,6 +229,28 @@ export const TimetableGrid: React.FC = () => {
                                 {currentWeekStart.getFullYear()}
                             </span>
                         </h2>
+
+                        <div className="h-6 w-px bg-slate-200 mx-2"></div>
+
+                        {/* Building Filter Dropdown */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-slate-500">Building:</span>
+                            <select
+                                value={selectedBuildingId}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setSelectedBuildingId(val === 'ALL' ? 'ALL' : Number(val));
+                                }}
+                                className="bg-slate-50 border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2 outline-none font-medium min-w-[160px]"
+                            >
+                                <option value="ALL">All Buildings</option>
+                                {buildings.map(b => (
+                                    <option key={b.building_id} value={b.building_id}>
+                                        {b.building_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -362,6 +406,7 @@ export const TimetableGrid: React.FC = () => {
                     handleBookingSuccess();
                 }}
                 slot={selectedSlot}
+                selectedBuildingId={selectedBuildingId === 'ALL' ? undefined : selectedBuildingId}
             />
 
             {/* View/Update/Delete Booking Modal */}

@@ -33,9 +33,10 @@ interface BookingModalProps {
         endTime: string;
         dayName: string;
     } | null;
+    selectedBuildingId?: number;
 }
 
-export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slot }) => {
+export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slot, selectedBuildingId }) => {
     const [step, setStep] = useState<1 | 2>(1);
     const [buildings, setBuildings] = useState<Building[]>([]);
     const [resourceTypes, setResourceTypes] = useState<ResourceType[]>([]);
@@ -48,11 +49,23 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
     useEffect(() => {
         if (isOpen) {
             loadData();
+            // We set step to 1 initially, but if buildings are loaded we might jump to 2
             setStep(1);
             setSelectedBuilding(null);
             setCompleted(false);
         }
     }, [isOpen]);
+
+    // Handle pre-selected building once data is loaded
+    useEffect(() => {
+        if (buildings.length > 0 && selectedBuildingId) {
+            const b = buildings.find(bldg => bldg.building_id === selectedBuildingId);
+            if (b) {
+                setSelectedBuilding(b);
+                setStep(2);
+            }
+        }
+    }, [buildings, selectedBuildingId, isOpen]);
 
     const loadData = async () => {
         setLoading(true);
@@ -206,8 +219,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
                                 <div className="space-y-6 animate-in slide-in-from-right-8 duration-300">
                                     <div className="flex items-center gap-3 text-sm text-slate-500 mb-6 bg-white p-2 rounded-lg border border-slate-100 w-fit shadow-sm">
                                         <button
-                                            onClick={() => setStep(1)}
-                                            className="font-medium text-slate-600 hover:text-indigo-600 hover:underline px-2"
+                                            onClick={() => {
+                                                if (!selectedBuildingId) {
+                                                    setStep(1);
+                                                }
+                                            }}
+                                            disabled={!!selectedBuildingId}
+                                            className={`font-medium px-2 ${selectedBuildingId ? 'text-slate-400 cursor-not-allowed' : 'text-slate-600 hover:text-indigo-600 hover:underline'}`}
                                         >
                                             Select Building
                                         </button>

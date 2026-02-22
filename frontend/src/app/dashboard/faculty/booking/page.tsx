@@ -3,7 +3,6 @@
 import { TimetableGrid } from '@/components/faculty/TimetableGrid';
 import { CalendarDays } from 'lucide-react';
 import { Sidebar } from '@/components/dashboard/Sidebar';
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 
 export default function FacultyBookingPage() {
     return (
@@ -14,10 +13,7 @@ export default function FacultyBookingPage() {
 
             {/* Main Content (Offset by sidebar width) */}
             <main className="flex-1 ml-64 min-w-0">
-                <div className="max-w-[1600px] mx-auto p-8">
-
-                    {/* Header */}
-                    <DashboardHeader />
+                <div className="max-w-[1600px] mx-auto p-8 pt-4">
 
                     {/* Page Title */}
                     <div className="flex items-center justify-between mb-6">
