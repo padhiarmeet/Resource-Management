@@ -4,10 +4,11 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { LogOut, Monitor, Moon, Sun, Globe, Bell, Shield, Key } from 'lucide-react';
+import { useTheme } from '@/components/ThemeProvider';
 
 export default function SettingsPage() {
     const router = useRouter();
-    const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('light');
+    const { theme, setTheme } = useTheme();
 
     const handleSignOut = () => {
         localStorage.removeItem("user");
@@ -31,7 +32,7 @@ export default function SettingsPage() {
 
                     <div className="space-y-6">
                         {/* Appearance Section */}
-                        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                        <div className="bg-white rounded-2xl border border-slate-200 p-6">
                             <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
                                 <Monitor size={20} className="text-indigo-600" />
                                 Appearance
@@ -67,7 +68,7 @@ export default function SettingsPage() {
                         </div>
 
                         {/* Preferences Section */}
-                        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                        <div className="bg-white rounded-2xl border border-slate-200 p-6">
                             <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
                                 <Globe size={20} className="text-indigo-600" />
                                 Preferences
@@ -102,7 +103,7 @@ export default function SettingsPage() {
                         </div>
 
                         {/* Security Section */}
-                        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                        <div className="bg-white rounded-2xl border border-slate-200 p-6">
                             <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
                                 <Shield size={20} className="text-indigo-600" />
                                 Security
@@ -125,7 +126,7 @@ export default function SettingsPage() {
                         </div>
 
                         {/* Danger Zone (Sign Out) */}
-                        <div className="bg-white rounded-2xl border border-red-200 p-6 shadow-sm">
+                        <div className="bg-white rounded-2xl border border-red-200 p-6">
                             <h2 className="text-lg font-semibold text-red-700 mb-2 flex items-center gap-2">
                                 <LogOut size={20} />
                                 Account Actions
@@ -135,7 +136,7 @@ export default function SettingsPage() {
                             </p>
                             <button
                                 onClick={handleSignOut}
-                                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm shadow-red-200"
+                                className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
                             >
                                 <LogOut size={16} />
                                 Sign Out

@@ -16,13 +16,13 @@ import { Button } from "@/components/ui/Button";
 
 export default function Home() {
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700">
+        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-700 is-map-page">
 
             {/* ─── Navbar ─── */}
             <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/60">
                 <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <Image src="/app_logo.png" alt="OpenSlot Logo" width={32} height={32} className="rounded-lg shadow-sm" />
+                        <Image src="/app_logo.png" alt="OpenSlot Logo" width={37} height={37} />
                         <span className="text-lg font-bold tracking-tight text-slate-900">OpenSlot</span>
                     </div>
                     <div className="flex items-center gap-4">

@@ -48,7 +48,7 @@ const menuConfig: Record<string, { label: string; icon: React.ElementType; href:
     ],
     STUDENT: [
         { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard/student" },
-        { label: "My Timetable", icon: BookOpen, href: "#" },
+        { label: "My Timetable", icon: BookOpen, href: "/dashboard/faculty/booking" },
         { label: "Resource Availability", icon: Monitor, href: "/dashboard/resource-bank" },
         { label: "Campus Map", icon: Map, href: "/dashboard/map" },
     ],
@@ -114,7 +114,7 @@ export const Sidebar: React.FC<{ className?: string }> = ({ className = "" }) =>
             </nav>
 
             {/* User Info & Bottom Actions */}
-            <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+            <div className="p-4 border-t border-slate-100">
                 {user && (
                     <div className="flex items-center gap-3 px-3 py-2 mb-2">
                         <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold">
@@ -143,7 +143,7 @@ const NavItem: React.FC<NavItemProps> = ({ icon: Icon, label, href = "#", active
     const content = (
         <div
             className={`flex items-center justify-between w-full px-3 py-2 text-sm rounded-lg transition-all duration-200 group ${active
-                ? "bg-slate-900 text-white shadow-sm"
+                ? "bg-slate-900 text-white"
                 : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                 }`}
         >

@@ -216,10 +216,10 @@ export const TimetableGrid: React.FC = () => {
 
     return (
         <>
-            <div className="bg-white rounded-lg shadow-none border border-slate-200 overflow-hidden flex flex-col h-full">
+            <div className="bg-white dark:bg-[#161b22] rounded-lg shadow-none border border-slate-200 dark:border-[#30363d] overflow-hidden flex flex-col h-full">
 
                 {/* Navigation Header */}
-                <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-white">
+                <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-[#30363d] bg-white dark:bg-[#161b22]">
                     <div className="flex items-center gap-4">
                         <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                             <Calendar size={20} className="text-indigo-600" />
@@ -294,7 +294,7 @@ export const TimetableGrid: React.FC = () => {
                             <span className={`text-sm font-bold uppercase tracking-wider mb-1 ${day.isToday ? 'text-indigo-700' : 'text-slate-700'}`}>
                                 {day.name}
                             </span>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${day.isToday ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200' : 'text-slate-500 bg-white border border-slate-200'}`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${day.isToday ? 'bg-indigo-600 text-white' : 'text-slate-500 dark:text-slate-400 bg-transparent dark:border-[#30363d] border border-slate-200'}`}>
                                 {day.dayNum}
                             </div>
                         </div>
@@ -302,7 +302,7 @@ export const TimetableGrid: React.FC = () => {
                 </div>
 
                 {/* Grid Content */}
-                <div className="divide-y divide-slate-100 bg-slate-50/30">
+                <div className="divide-y divide-slate-100 dark:divide-[#21262d] bg-slate-50/30 dark:bg-transparent">
                     {timeline.map((row, idx) => {
                         const isBreak = row.type === 'break';
 
@@ -310,7 +310,7 @@ export const TimetableGrid: React.FC = () => {
                             return (
                                 <div key={idx} className="relative py-2 bg-slate-100/50 flex justify-center items-center border-b border-slate-200/60">
                                     <div className="absolute left-0 inset-y-0 w-[80px] flex items-center justify-center">
-                                        <div className="text-[10px] font-bold text-slate-400 bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-sm">
+                                        <div className="text-[10px] font-bold text-slate-400 dark:text-[#6e7681] bg-white dark:bg-transparent px-2 py-0.5 rounded-full border border-slate-200 dark:border-[#30363d]">
                                             {row.start}
                                         </div>
                                     </div>
@@ -326,9 +326,9 @@ export const TimetableGrid: React.FC = () => {
 
                         return (
                             <div key={idx} className="grid grid-cols-[80px_repeat(5,1fr)] min-h-[140px] group">
-                                <div className="p-3 flex flex-col items-center justify-start pt-6 border-r border-slate-100 bg-white">
+                                <div className="p-3 flex flex-col items-center justify-start pt-6 border-r border-slate-100 dark:border-[#21262d] bg-white dark:bg-transparent">
                                     <span className="text-sm font-bold text-slate-700 font-mono">{row.start}</span>
-                                    <div className="h-8 w-px bg-slate-200 my-2"></div>
+                                    <div className="h-8 w-px bg-slate-200 dark:bg-[#30363d] my-2"></div>
                                     <span className="text-xs text-slate-400 font-mono">{row.end}</span>
                                 </div>
 
@@ -372,16 +372,16 @@ export const TimetableGrid: React.FC = () => {
                                                     </div>
                                                 </button>
                                             ) : isPastSlot ? (
-                                                <div className="w-full h-full rounded-md border border-dashed border-slate-200 bg-slate-50/50 flex flex-col items-center justify-center gap-1 opacity-50">
+                                                <div className="w-full h-full rounded-md border border-dashed border-slate-200 dark:border-[#30363d] bg-slate-50/50 dark:bg-transparent flex flex-col items-center justify-center gap-1 opacity-50">
                                                     <Clock size={16} className="text-slate-300" />
                                                     <span className="text-[10px] font-semibold text-slate-300 uppercase tracking-wider">Past</span>
                                                 </div>
                                             ) : (
                                                 <button
                                                     onClick={() => handleSlotClick(dayIdx, row)}
-                                                    className="w-full h-full rounded-md border border-slate-200 bg-white hover:border-indigo-400 transition-all duration-200 group/slot flex flex-col items-center justify-center gap-2"
+                                                    className="w-full h-full rounded-md border border-slate-200 dark:border-[#30363d] bg-white dark:bg-transparent dark:hover:border-indigo-500 hover:border-indigo-400 transition-all duration-200 group/slot flex flex-col items-center justify-center gap-2"
                                                 >
-                                                    <div className="w-10 h-10 rounded-full bg-slate-50 group-hover/slot:bg-indigo-50 text-slate-300 group-hover/slot:text-indigo-600 flex items-center justify-center transition-colors">
+                                                    <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-[#1c2333] group-hover/slot:bg-indigo-50 dark:group-hover/slot:bg-indigo-900/30 text-slate-300 group-hover/slot:text-indigo-600 flex items-center justify-center transition-colors">
                                                         <Plus size={20} />
                                                     </div>
                                                     <span className="text-xs font-semibold text-slate-400 group-hover/slot:text-indigo-600">

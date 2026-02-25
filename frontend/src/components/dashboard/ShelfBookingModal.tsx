@@ -98,7 +98,7 @@ export const ShelfBookingModal: React.FC<ShelfBookingModalProps> = ({
     if (!isOpen || !shelf) return null;
 
     return (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200 is-map-page">
             <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden relative">
 
                 {/* Header */}

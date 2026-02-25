@@ -263,7 +263,7 @@ export default function ProfilePage() {
                 <div className="flex gap-6 flex-col lg:flex-row">
                     {/* ── Left: Profile Card ──────────────────────────────── */}
                     <aside className="w-full lg:w-72 flex-shrink-0">
-                        <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col items-center text-center shadow-sm">
+                        <div className="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col items-center text-center">
                             {/* Avatar */}
                             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-3xl font-bold text-white shadow-md mb-4">
                                 {user?.name?.charAt(0)?.toUpperCase() ?? "U"}
@@ -302,13 +302,13 @@ export default function ProfilePage() {
                     {/* ── Right: Tabs ─────────────────────────────────────── */}
                     <div className="flex-1">
                         {/* Tab Nav */}
-                        <div className="flex gap-1 bg-white border border-slate-200 rounded-xl p-1 mb-6 shadow-sm overflow-x-auto">
+                        <div className="flex gap-1 bg-white border border-slate-200 rounded-xl p-1 mb-6 overflow-x-auto">
                             {tabs.map((tab) => (
                                 <button
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab.id
-                                        ? "bg-slate-900 text-white shadow-sm"
+                                        ? "bg-slate-900 text-white"
                                         : "text-slate-500 hover:text-slate-700 hover:bg-slate-50"
                                         }`}
                                 >
@@ -320,7 +320,7 @@ export default function ProfilePage() {
 
                         {/* ── Profile Tab ────────────────────────────────── */}
                         {activeTab === "profile" && (
-                            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                            <div className="bg-white border border-slate-200 rounded-2xl p-6">
                                 <h3 className="text-base font-semibold text-slate-800 mb-1">Personal Information</h3>
                                 <p className="text-sm text-slate-500 mb-6">Update your display name and email address.</p>
                                 <form onSubmit={handleProfileSave} className="flex flex-col gap-5">
@@ -368,7 +368,7 @@ export default function ProfilePage() {
 
                         {/* ── Password Tab ─────────────────────────────────── */}
                         {activeTab === "password" && (
-                            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                            <div className="bg-white border border-slate-200 rounded-2xl p-6">
                                 <h3 className="text-base font-semibold text-slate-800 mb-1">Change Password</h3>
                                 <p className="text-sm text-slate-500 mb-6">Choose a strong password to keep your account secure.</p>
 
@@ -448,7 +448,7 @@ export default function ProfilePage() {
 
                         {/* ── Bookings Tab ─────────────────────────────────── */}
                         {activeTab === "bookings" && (
-                            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
                                 <div className="px-6 py-5 border-b border-slate-100">
                                     <h3 className="text-base font-semibold text-slate-800">Resource Bookings</h3>
                                     <p className="text-sm text-slate-500 mt-0.5">All your room / lab / facility bookings</p>
@@ -496,7 +496,7 @@ export default function ProfilePage() {
 
                         {/* ── Shelf Bookings Tab ───────────────────────────── */}
                         {activeTab === "shelves" && (
-                            <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
                                 <div className="px-6 py-5 border-b border-slate-100">
                                     <h3 className="text-base font-semibold text-slate-800">Shelf / Cupboard Bookings</h3>
                                     <p className="text-sm text-slate-500 mt-0.5">All your cupboard and shelf storage bookings</p>

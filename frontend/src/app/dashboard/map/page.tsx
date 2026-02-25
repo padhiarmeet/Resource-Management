@@ -140,7 +140,7 @@ export default function MapPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex overflow-x-hidden">
+        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex overflow-x-hidden is-map-page">
             <Sidebar className="hidden md:block" />
 
             {/* Main Content */}
@@ -165,9 +165,6 @@ export default function MapPage() {
                             backgroundSize: '30px 30px'
                         }}>
                     </div>
-
-                    {/* Subtle Gradient Overlay */}
-                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-indigo-50/30 via-transparent to-slate-100/50"></div>
 
                     {/* The Map Layout - 6 Buildings */}
                     <div className="relative w-[1400px] h-[800px] scale-75 origin-center">

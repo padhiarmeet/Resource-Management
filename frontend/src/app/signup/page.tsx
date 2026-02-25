@@ -86,7 +86,7 @@ export default function SignupPage() {
     };
 
     return (
-        <main className="h-screen flex items-center justify-center p-4 font-sans text-slate-900 overflow-hidden">
+        <main className="h-screen flex items-center justify-center p-4 font-sans text-slate-900 overflow-hidden is-map-page">
             <div className="w-full max-w-[1100px] h-[90vh] bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-slate-200">
 
                 {/* LEFT SIDE: Visuals */}
@@ -129,9 +129,9 @@ export default function SignupPage() {
                 </div>
 
                 {/* RIGHT SIDE: Form Area */}
-                <div className="w-full lg:w-[60%] p-8 lg:p-16 flex flex-col justify-center relative z-10 h-full overflow-y-auto">
+                <div className="w-full lg:w-[60%] p-6 lg:p-10 flex flex-col justify-center relative z-10 h-full">
 
-                    <div className="mb-8 text-center lg:text-left">
+                    <div className="mb-5 text-center lg:text-left">
                         <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 mb-2">
                             Create Account
                         </h1>
@@ -244,7 +244,7 @@ export default function SignupPage() {
                         </Button>
                     </form>
 
-                    <div className="mt-6 text-center">
+                    <div className="mt-4 text-center">
                         <p className="text-xs text-slate-500">
                             Already have an account?{" "}
                             <Link

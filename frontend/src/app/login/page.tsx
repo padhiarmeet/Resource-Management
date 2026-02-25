@@ -107,7 +107,7 @@ export default function LoginPage() {
     };
 
     return (
-        <main className="min-h-screen flex items-center justify-center p-4 lg:p-8 font-sans text-slate-900 bg-slate-50">
+        <main className="min-h-screen flex items-center justify-center p-4 lg:p-8 font-sans text-slate-900 bg-slate-50 is-map-page">
             {/* Main Container */}
             <div className="w-full max-w-[1200px] min-h-[80vh] bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-slate-200">
 

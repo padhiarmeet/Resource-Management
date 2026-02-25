@@ -142,10 +142,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-white dark:bg-[#161b22] rounded-lg shadow-lg w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
 
                 {/* Header */}
-                <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white relative">
+                <div className="px-8 py-6 border-b border-slate-100 dark:border-[#21262d] flex items-center justify-between bg-white dark:bg-[#161b22] relative">
                     <div>
                         <h2 className="text-2xl font-bold text-slate-900 tracking-tight">
                             {completed ? "Booking Confirmed" : "Request Booking"}
@@ -165,7 +165,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
 
                     {/* Step Progress Bar */}
                     {!completed && !loading && (
-                        <div className="absolute bottom-0 left-0 w-full h-1 bg-slate-100">
+                        <div className="absolute bottom-0 left-0 w-full h-1 bg-slate-100 dark:bg-[#21262d]">
                             <div
                                 className="h-full bg-indigo-600 transition-all duration-500 ease-out"
                                 style={{ width: step === 1 ? '50%' : '100%' }}
@@ -175,7 +175,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 overflow-y-auto p-8 bg-slate-50/50">
+                <div className="flex-1 overflow-y-auto p-8 bg-slate-50 dark:bg-[#0d1117]">
                     {completed ? (
                         <div className="flex flex-col items-center justify-center py-12 text-center space-y-6 animate-in zoom-in-50 duration-300">
                             <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-2 shadow-lg shadow-green-100/50">
@@ -207,18 +207,18 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
                                             <button
                                                 key={building.building_id}
                                                 onClick={() => handleBuildingSelect(building)}
-                                                className="group relative flex flex-col items-start p-5 bg-white border border-slate-200 rounded-lg hover:border-indigo-500 transition-all duration-200 text-left"
+                                                className="group relative flex flex-col items-start p-5 bg-white dark:bg-[#1c2333] border border-slate-200 dark:border-[#30363d] rounded-lg hover:border-indigo-500 dark:hover:border-indigo-500 transition-all duration-200 text-left"
                                             >
                                                 <div className="absolute top-5 right-5 text-slate-300 group-hover:text-indigo-500 transition-colors">
                                                     <ArrowRight size={20} className="-translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                                                 </div>
 
-                                                <div className="p-3 bg-gradient-to-br from-indigo-50 to-violet-50 rounded-xl text-indigo-600 mb-4 group-hover:scale-110 transition-transform duration-300">
+                                                <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl text-indigo-600 mb-4 group-hover:scale-110 transition-transform duration-300">
                                                     <BuildingIcon size={24} />
                                                 </div>
                                                 <h4 className="text-lg font-bold text-slate-800 mb-1 group-hover:text-indigo-700 transition-colors">{building.building_name}</h4>
                                                 <div className="flex items-center gap-2 text-sm text-slate-500 mt-auto">
-                                                    <span className="font-medium bg-slate-100 px-2 py-0.5 rounded text-xs">{building.building_number}</span>
+                                                    <span className="font-medium bg-slate-100 dark:bg-[#21262d] dark:text-slate-400 px-2 py-0.5 rounded text-xs">{building.building_number}</span>
                                                     <span>•</span>
                                                     <span>{building.total_floors} Floors</span>
                                                 </div>
@@ -228,7 +228,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
                                 </div>
                             ) : (
                                 <div className="space-y-6 animate-in slide-in-from-right-8 duration-300">
-                                    <div className="flex items-center gap-3 text-sm text-slate-500 mb-6 bg-white p-2 rounded-lg border border-slate-100 w-fit shadow-sm">
+                                    <div className="flex items-center gap-3 text-sm text-slate-500 mb-6 bg-white dark:bg-[#1c2333] p-2 rounded-lg border border-slate-100 dark:border-[#30363d] w-fit">
                                         <button
                                             onClick={() => {
                                                 if (!selectedBuildingId) {
@@ -258,9 +258,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
                                                 key={type.resource_type_id}
                                                 onClick={() => handleResourceTypeSelect(type)}
                                                 disabled={submitting}
-                                                className="group flex items-center gap-4 p-5 bg-white border border-slate-200 rounded-lg hover:border-fuchsia-500 transition-all duration-200 text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="group flex items-center gap-4 p-5 bg-white dark:bg-[#1c2333] border border-slate-200 dark:border-[#30363d] rounded-lg hover:border-fuchsia-500 transition-all duration-200 text-left disabled:opacity-50 disabled:cursor-not-allowed"
                                             >
-                                                <div className="p-3 bg-gradient-to-br from-fuchsia-50 to-pink-50 text-fuchsia-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
+                                                <div className="p-3 bg-fuchsia-50 dark:bg-fuchsia-900/20 text-fuchsia-600 rounded-xl group-hover:scale-110 transition-transform duration-300">
                                                     <Layers size={22} />
                                                 </div>
                                                 <div className="flex-1">
@@ -270,7 +270,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
                                                 {submitting ? (
                                                     <div className="animate-spin h-5 w-5 border-2 border-fuchsia-600 border-t-transparent rounded-full"></div>
                                                 ) : (
-                                                    <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-fuchsia-100 group-hover:text-fuchsia-600 transition-all">
+                                                    <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-[#21262d] flex items-center justify-center text-slate-300 group-hover:bg-fuchsia-100 dark:group-hover:bg-fuchsia-900/30 group-hover:text-fuchsia-600 transition-all">
                                                         <ArrowRight size={16} />
                                                     </div>
                                                 )}
