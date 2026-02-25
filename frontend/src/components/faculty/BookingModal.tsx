@@ -108,9 +108,20 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
         const startDatetime = `${slot.date}T${slot.startTime}:00`;
         const endDatetime = `${slot.date}T${slot.endTime}:00`;
 
+        let currentUserId = 1; // Default fallback
+        try {
+            const stored = localStorage.getItem("user");
+            if (stored) {
+                const user = JSON.parse(stored);
+                currentUserId = user.userId;
+            }
+        } catch (e) {
+            console.error("Failed to parse user from localStorage", e);
+        }
+
         try {
             await submitBooking({
-                user_id: 1, // Hardcoded for now (current logged-in user)
+                user_id: currentUserId,
                 resource_id: matchingResource.resource_id,
                 start_datetime: startDatetime,
                 end_datetime: endDatetime,

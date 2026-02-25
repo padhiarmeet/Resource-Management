@@ -25,7 +25,8 @@ public class Users {
     private String email;
     private String role;
     private String password;
-    private LocalDateTime created_at;        
+    private LocalDateTime created_at;
+
     @PrePersist
     protected void onCreate() {
         this.created_at = LocalDateTime.now();
