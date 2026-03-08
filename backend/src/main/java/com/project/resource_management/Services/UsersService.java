@@ -24,11 +24,14 @@ public class UsersService {
         return repo.findById(id).orElse(new Users());
     }
 
+    public Users findByEmail(String email) {
+        return repo.findByEmail(email).orElse(null);
+    }
+
     public void addUser(Users user) {
         try {
             repo.save(user);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Error while adding User - " + e);
         }
     }
@@ -38,12 +41,10 @@ public class UsersService {
             if (repo.existsById(id)) {
                 repo.deleteById(id);
                 return true;
-            } 
-            else {
+            } else {
                 return false;
             }
-        } 
-        catch (Exception e) {
+        } catch (Exception e) {
 
             System.out.println("Error while Deleting User - " + e);
             return false;
@@ -57,18 +58,18 @@ public class UsersService {
         if (existingUserOpt.isPresent()) {
             Users userToUpdate = existingUserOpt.get();
 
-            
             userToUpdate.setName(user.getName());
-            userToUpdate.setRole(user.getRole());
-
-            
-            if (!userToUpdate.getEmail().equals(user.getEmail())) {
-                 if (repo.findByEmail(user.getEmail()).isPresent()) {
-                     throw new RuntimeException("New email is already in use!");
-                 }
-                 userToUpdate.setEmail(user.getEmail());
+            if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+                userToUpdate.setRoles(user.getRoles());
             }
-            
+
+            if (!userToUpdate.getEmail().equals(user.getEmail())) {
+                if (repo.findByEmail(user.getEmail()).isPresent()) {
+                    throw new RuntimeException("New email is already in use!");
+                }
+                userToUpdate.setEmail(user.getEmail());
+            }
+
             if (user.getPassword() != null && !user.getPassword().isEmpty()) {
                 userToUpdate.setPassword(user.getPassword());
             }

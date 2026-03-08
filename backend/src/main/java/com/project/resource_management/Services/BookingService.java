@@ -113,7 +113,7 @@ public class BookingService {
 
             booking.setStatus(newStatus);
 
-            // Set approver (Who want to book that !) / (who clicked button !)
+            
             Users approver = userRepo.findById(approverId)
                     .orElseThrow(() -> new RuntimeException("Approver not found"));
             booking.setApprover(approver);

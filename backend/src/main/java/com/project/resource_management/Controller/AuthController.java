@@ -1,6 +1,7 @@
 package com.project.resource_management.Controller;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.resource_management.Model.Role;
 import com.project.resource_management.Model.Users;
+import com.project.resource_management.Repository.RoleRepo;
 import com.project.resource_management.Repository.UsersRepo;
 import com.project.resource_management.Services.UsersService;
 
@@ -26,12 +29,15 @@ public class AuthController {
     @Autowired
     private UsersRepo usersRepo;
 
-    // ─── Register ───
+    @Autowired
+    private RoleRepo roleRepo;
+
+    // Register
     public static class RegisterRequest {
         public String name;
         public String email;
         public String password;
-        public String role;
+        public String role; // e.g. "ADMIN", "STUDENT", "FACULTY", "MAINTENANCE"
     }
 
     @PostMapping("/register")
@@ -43,11 +49,19 @@ public class AuthController {
                 return new ResponseEntity<>("Email already registered!", HttpStatus.CONFLICT);
             }
 
+            // Resolve role from roles table (default to STUDENT)
+            String roleName = (req.role != null ? req.role.toUpperCase() : "STUDENT");
+            Optional<Role> roleOpt = roleRepo.findByRoleName(roleName);
+            if (roleOpt.isEmpty()) {
+                return new ResponseEntity<>("Role '" + roleName + "' not found.", HttpStatus.BAD_REQUEST);
+            }
+ 
             Users user = new Users();
             user.setName(req.name);
             user.setEmail(req.email);
             user.setPassword(req.password);
-            user.setRole(req.role != null ? req.role.toUpperCase() : "STUDENT");
+            user.setEnabled(true);
+            user.setRoles(Set.of(roleOpt.get()));
 
             usersService.addUser(user);
 
@@ -66,7 +80,7 @@ public class AuthController {
         }
     }
 
-    // ─── Login ───
+    // Login
     public static class LoginRequest {
         public String email;
         public String password;
@@ -86,6 +100,11 @@ public class AuthController {
 
             if (!user.getPassword().equals(req.password)) {
                 return new ResponseEntity<>("Invalid password!", HttpStatus.UNAUTHORIZED);
+            }
+
+            if (!user.isEnabled()) {
+                return new ResponseEntity<>("Your account has been disabled. Please contact admin.",
+                        HttpStatus.FORBIDDEN);
             }
 
             // Don't send password back

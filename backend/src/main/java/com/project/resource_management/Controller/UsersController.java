@@ -69,7 +69,13 @@ public class UsersController {
 
     @PostMapping("/")
     public ResponseEntity<?> addUser(@RequestBody Users user) {
-        try {
+        try { 
+            if (user.getEmail() == null || user.getEmail().isBlank()) {
+                return new ResponseEntity<>("Email is required!", HttpStatus.BAD_REQUEST);
+            }
+            if (service.findByEmail(user.getEmail()) != null) {
+                return new ResponseEntity<>("Email already exists!", HttpStatus.CONFLICT);
+            }
             service.addUser(user);
             return new ResponseEntity<>("User added successfully", HttpStatus.CREATED);
         } catch (Exception e) {
