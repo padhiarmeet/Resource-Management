@@ -28,7 +28,7 @@ public class UsersController {
     @Autowired
     private UsersService service;
 
-    @GetMapping("/")
+    @GetMapping()
     public ResponseEntity<List<Users>> getAllUsers() {
         return new ResponseEntity<>(service.getAllUsers(), HttpStatus.OK);
     }

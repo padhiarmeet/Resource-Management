@@ -6,6 +6,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,8 +19,11 @@ import com.project.resource_management.Repository.RoleRepo;
 import com.project.resource_management.Repository.UsersRepo;
 import com.project.resource_management.Services.UsersService;
 
+import lombok.AllArgsConstructor;
+
 @RestController
 @CrossOrigin
+@AllArgsConstructor
 @RequestMapping("api/auth")
 public class AuthController {
 
@@ -31,6 +35,8 @@ public class AuthController {
 
     @Autowired
     private RoleRepo roleRepo;
+
+    private final PasswordEncoder passwordEncoder;
 
     // Register
     public static class RegisterRequest {
@@ -59,24 +65,27 @@ public class AuthController {
             Users user = new Users();
             user.setName(req.name);
             user.setEmail(req.email);
-            user.setPassword(req.password);
+            user.setPassword(passwordEncoder.encode(req.password));
+            // user.setPassword(req.password);
             user.setEnabled(true);
             user.setRoles(Set.of(roleOpt.get()));
 
             usersService.addUser(user);
 
-            // Return the saved user (fetch by email to get the generated ID)
+            // This is for returning the uesr that saved but we will not send the pasword so we will first set password to null and then send the object!
+
             Optional<Users> saved = usersRepo.findByEmail(req.email);
             if (saved.isPresent()) {
                 Users u = saved.get();
-                u.setPassword(null); // Don't send password back
+                u.setPassword(null);
+
                 return new ResponseEntity<>(u, HttpStatus.CREATED);
             }
 
             return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Registration failed: " + e.getMessage(),
-                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>("Registration failed: " + e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

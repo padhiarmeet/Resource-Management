@@ -1,7 +1,13 @@
 package com.project.resource_management.Model;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,7 +30,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-public class Users {
+public class Users implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,5 +57,23 @@ public class Users {
     @PrePersist
     protected void onCreate() {
         this.created_at = LocalDateTime.now();
+    }
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+
+        return roles.stream().map(role-> new SimpleGrantedAuthority(role.getRoleName())).toList();
+
+    }
+
+    @Override
+    public String getUsername() {
+       return this.email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
     }
 }
