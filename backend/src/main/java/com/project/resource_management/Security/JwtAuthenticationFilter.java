@@ -1,8 +1,7 @@
 package com.project.resource_management.Security;
 
 import java.io.IOException;
-import java.nio.charset.MalformedInputException;
-import java.security.Security;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,8 +16,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.project.resource_management.Repository.UsersRepo;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -75,20 +76,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 });
 
             }
-            // catch(ExpiredJWTException e){
-
-            // }
-            // catch(MalformedInputException e) {
-
-            // }
-            catch (JwtException e) {
-
-            } catch (Exception e) {
-
+            catch(ExpiredJwtException e){
+                request.setAttribute("error", "Token Expired");
+            }
+            catch (Exception e) {
+                request.setAttribute("error", "Invalid Token"); 
             }
         }
 
         filterChain.doFilter(request, response);
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+      return request.getRequestURI().startsWith("/api/auth/");
+   }
 
 }

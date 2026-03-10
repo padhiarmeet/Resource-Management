@@ -6,7 +6,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -45,10 +47,15 @@ public class SecurityConfig {
                     authException.printStackTrace();
                     response.setStatus(401);
                     response.setContentType("application/json");
-                    String message = "unautheriized access " + authException.getMessage();
+                    String message = "unautheriized Access! " + authException.getMessage();
+                    String error = (String) request.getAttribute("error");
 
-                    Map<String, String> errorMap = Map.of("message", message, "status", String.valueOf(401),
-                            "statusCode", Integer.toString(401));
+                    if(error != null) {
+                        message = error;
+                    }
+
+                    Map<String, Object> errorMap = Map.of("message", message,
+                            "statusCode", 401);
 
                     var objectMapper = new ObjectMapper();
                     response.getWriter().write(objectMapper.writeValueAsString(errorMap));
@@ -74,6 +81,12 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) {
+        return authenticationConfiguration.getAuthenticationManager();
+
     }
 
     // @Bean

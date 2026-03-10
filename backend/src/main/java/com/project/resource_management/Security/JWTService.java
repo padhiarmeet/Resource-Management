@@ -10,6 +10,7 @@ import java.util.UUID;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.project.resource_management.Model.Users;
@@ -19,8 +20,12 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
+import lombok.Setter;
 
 @Service
+@Getter
+@Setter
 public class JWTService {
 
     private final SecretKey key;
