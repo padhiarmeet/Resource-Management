@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 
 import com.project.resource_management.Model.Users;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -82,4 +84,52 @@ public class JWTService {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
-}
+
+    public Jws<Claims> parse(String token) {
+        try{
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token);
+        }
+        catch(Exception e) {
+            throw new RuntimeException("Invalid token.");
+        }
+    }
+
+    public boolean isAccessToken(String token) {
+        Claims claims = parse(token).getPayload();
+
+        return "access".equals(claims.get("typ", String.class));
+    }
+
+    public boolean isRefreshToken(String token) {
+        Claims claims = parse(token).getPayload();
+
+        return "refresh".equals(claims.get("typ", String.class));
+    }
+
+    public UUID getUserId(String token) {
+        Claims claims = parse(token).getPayload();
+
+        return UUID.fromString(claims.getSubject());
+    }
+
+    public String getJti(String token) {
+        Claims claims = parse(token).getPayload();
+
+        return parse(token).getPayload().getId(); 
+    }
+
+    public List<String> getRoles(String token) {
+        Claims claims = parse(token).getPayload();
+
+        return (List<String>)claims.get("roles");
+    } 
+
+    public String getEmail(String token) {
+        Claims claims = parse(token).getPayload();
+
+        return claims.get("email", String.class);
+    }
+} 
