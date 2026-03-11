@@ -1,8 +1,17 @@
 package com.project.resource_management.Security;
 
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties.Http;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
+
 @Service
+@Getter
 public class CookieService {
     
     private final String refreshTokenCookieName;
@@ -10,4 +19,63 @@ public class CookieService {
     private final boolean cookieSecure;
     private final String cookieDomain;
     private final String cookieSameSite;
+
+    public CookieService(
+        @Value("${security.jwt.refresh-token-cookie-name}") String refreshTokenCookieName,
+        @Value("${security.jwt.cookie-http-only}") boolean cookieHttpOnly,
+        @Value("${security.jwt.cookie-secure}") boolean cookieSecure,
+        @Value("${security.jwt.cookie-domain}") String cookieDomain,
+        @Value("${security.jwt.cookie-same-site}") String cookieSameSite) {
+
+        this.refreshTokenCookieName = refreshTokenCookieName;
+        this.cookieHttpOnly = cookieHttpOnly;
+        this.cookieSecure = cookieSecure;
+        this.cookieDomain = cookieDomain;
+        this.cookieSameSite = cookieSameSite;
+    }
+
+     public void attachRefreshCookie(HttpServletResponse response, String value, int maxAge) {
+        var responceCookieBuilder =  ResponseCookie.from(refreshTokenCookieName, value)
+            .httpOnly(cookieHttpOnly)
+            .secure(cookieSecure)
+            .path("/")
+            .maxAge(maxAge)
+            .sameSite(cookieSameSite);
+
+        if(cookieDomain != null && !cookieDomain.isBlank()) {
+            responceCookieBuilder.domain(cookieDomain);
+        }
+        ResponseCookie cookie = responceCookieBuilder.build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+     }
+
+     public void clearRefreshCookie(HttpServletResponse response) {
+        var responceCookieBuilder =  ResponseCookie.from(refreshTokenCookieName, "")
+            .httpOnly(cookieHttpOnly)
+            .secure(cookieSecure)
+            .path("/")
+            .maxAge(0)
+            .sameSite(cookieSameSite);
+
+        if(cookieDomain != null && !cookieDomain.isBlank()) {
+            responceCookieBuilder.domain(cookieDomain);
+        }
+        ResponseCookie cookie = responceCookieBuilder.build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        // Also clear JSESSIONID cookie if present
+        ResponseCookie jsessionCookie = ResponseCookie.from("JSESSIONID", "")
+            .httpOnly(true)
+            .secure(cookieSecure)
+            .path("/")
+            .maxAge(0)
+            .sameSite(cookieSameSite)
+            .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, jsessionCookie.toString());
+     } 
+
+     public void addNoStoreHeaders(HttpServletResponse response) {
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store");
+        response.setHeader(HttpHeaders.PRAGMA, "no-cache");
+     }
 }

@@ -5,7 +5,8 @@ import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+// UUID is no longer needed for user id parsing
+import java.util.UUID; // keep for id generation but not for getUserId
 
 import javax.crypto.SecretKey;
 
@@ -114,10 +115,17 @@ public class JWTService {
         return "refresh".equals(claims.get("typ", String.class));
     }
 
-    public UUID getUserId(String token) {
+    // userId is stored as a numeric string in the subject.
+    // Parse it back to an int rather than a UUID so it matches
+    // the `Users.userId` field type.
+    public int getUserId(String token) {
         Claims claims = parse(token).getPayload();
-
-        return UUID.fromString(claims.getSubject());
+        String subject = claims.getSubject();
+        try {
+            return Integer.parseInt(subject);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid user id in token: " + subject, e);
+        }
     }
 
     public String getJti(String token) {

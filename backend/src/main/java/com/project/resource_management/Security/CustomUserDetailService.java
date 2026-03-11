@@ -9,7 +9,7 @@ import com.project.resource_management.Repository.UsersRepo;
 
 import lombok.RequiredArgsConstructor;
 
-
+//Spring boot will automatically detects it as our service cause its implements UserDetailsService and has annotation @Service
 @Service
 // This is Lomboks annotation, will geneartes contructor for requried fields (fields will final keyword or @Notnull annotation)
 // IN this case UserRepo variable !!
