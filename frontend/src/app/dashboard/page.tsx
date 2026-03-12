@@ -42,15 +42,23 @@ export default function Dashboard() {
         meetingRooms: 0,
     });
 
-    // Greeting
     const [greeting, setGreeting] = useState("Good morning");
-    const facultyName = "Priya Sharma"; // Hardcoded for now
+    const [userName, setUserName] = useState("there")
 
     useEffect(() => {
         const hour = new Date().getHours();
         if (hour < 12) setGreeting("Good morning");
         else if (hour < 18) setGreeting("Good afternoon");
         else setGreeting("Good evening");
+
+        // Read the logged-in user's name from localStorage
+        try {
+            const stored = localStorage.getItem("user");
+            if (stored) {
+                const user = JSON.parse(stored);
+                if (user.name) setUserName(user.name);
+            }
+        } catch { /* ignore */ }
     }, []);
 
     useEffect(() => {
@@ -157,7 +165,7 @@ export default function Dashboard() {
                     <DashboardHeader
                         title="Dashboard"
                         subtitle={
-                            <span>{greeting}, <span className="font-semibold text-indigo-600">{facultyName} Sir</span>.</span>
+                            <span>{greeting}, <span className="font-semibold text-indigo-600">{userName}</span>!</span>
                         }
                     />
 

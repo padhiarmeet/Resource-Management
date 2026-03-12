@@ -1,16 +1,84 @@
 export const API_BASE_URL = "http://localhost:8080/api";
 
-async function apiFetch(endpoint: string, options?: RequestInit) {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+async function apiFetch(endpoint: string, options: RequestInit = {}) {
+    // 1. Prepare options and headers
+    const reqOptions: RequestInit = { ...options };
+    
+    // Ensure credentials are included to support HTTP-only refresh cookies
+    reqOptions.credentials = "include";
+
+    const headers = new Headers(reqOptions.headers || {});
+    
+    // 2. Attach existing access token if not logging in/registering/refreshing
+    if (!endpoint.includes("/auth/")) {
+        const token = localStorage.getItem("accessToken");
+        if (token) {
+            headers.set("Authorization", `Bearer ${token}`);
+        }
+    }
+    reqOptions.headers = headers;
+
+    // 3. Make initial request
+    let response = await fetch(`${API_BASE_URL}${endpoint}`, reqOptions);
+
+    // 4. Handle 401 Unauthorized (Token Expiry) via Refresh Token
+    // IMPORTANT: Avoid infinite loop if the refresh endpoint itself returns 401
+    if ((response.status === 401 || response.status === 403) && !endpoint.includes("/auth/")) {
+        try {
+            // Attempt refresh
+            const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include", // Essential to send the HTTP-only cookie
+            });
+
+            if (refreshResponse.ok) {
+                const data = await refreshResponse.json();
+                // Store new token
+                localStorage.setItem("accessToken", data.accessToken);
+                
+                // Re-attempt original request
+                headers.set("Authorization", `Bearer ${data.accessToken}`);
+                reqOptions.headers = headers;
+                response = await fetch(`${API_BASE_URL}${endpoint}`, reqOptions);
+            } else {
+                // Refresh failed (user truly logged out or token revoked, or token expired)
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("user");
+                window.location.href = "/login"; // Force redirect to login
+                throw new Error("Session expired. Please log in again.");
+            }
+        } catch (err) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("user");
+            if (window.location.pathname !== "/login") {
+                window.location.href = "/login";
+            }
+            throw err;
+        }
+    }
+
     if (!response.ok) {
-        // Try to read the actual error message from the backend response body
         let errorMessage = response.statusText;
         try {
             const errorBody = await response.text();
-            if (errorBody) errorMessage = errorBody;
-        } catch { /* ignore parse errors */ }
+            if (errorBody) {
+                try {
+                    // Try to parse as JSON first (handles Spring Boot Error responses)
+                    const parsed = JSON.parse(errorBody);
+                    errorMessage = parsed.message || errorBody;
+                } catch {
+                    // Not JSON, just use text
+                    errorMessage = errorBody;
+                }
+            }
+        } catch { /* ignore */ }
         throw new Error(errorMessage);
     }
+    
+    // Some endpoints return 204 No Content
+    if (response.status === 204) return null;
+    
     return response.json();
 }
 
@@ -136,6 +204,12 @@ export async function fetchMaintenanceByBuilding(buildingId: number) {
 
 // ─── Auth APIs ───
 
+export async function authLogout() {
+    return apiFetch("/auth/logout", {
+        method: "POST",
+    });
+}
+
 export async function loginUser(email: string, password: string) {
     return apiFetch("/auth/login", {
         method: "POST",
@@ -184,7 +258,7 @@ export interface User {
 }
 
 export async function fetchUsers() {
-    return apiFetch("/users/");
+    return apiFetch("/users");
 }
 
 export async function createUser(user: Partial<User>) {

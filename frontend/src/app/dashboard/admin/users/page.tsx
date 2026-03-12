@@ -18,17 +18,39 @@ import {
     CheckCircle2,
     Lock
 } from "lucide-react";
-import { fetchUsers, createUser, updateUser, deleteUser, User } from "@/lib/api";
+import { fetchUsers, createUser, updateUser, deleteUser } from "@/lib/api";
+
+// Backend returns User with a 'roles' array. This helper extracts the primary role string.
+interface BackendUser {
+    userId: number;
+    user_id?: number;
+    name: string;
+    email: string;
+    roles?: { roleName: string }[];
+    role?: string; // legacy fallback
+    enabled?: boolean;
+}
+
+function getRoleFromUser(user: BackendUser): string {
+    if (user.roles && user.roles.length > 0) {
+        return user.roles[0].roleName.toUpperCase();
+    }
+    return (user.role || "STUDENT").toUpperCase();
+}
+
+function getUserId(user: BackendUser): number {
+    return user.userId ?? user.user_id ?? 0;
+}
 
 export default function UsersPage() {
-    const [users, setUsers] = useState<User[]>([]);
+    const [users, setUsers] = useState<BackendUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [isdataLoading, setIsDataLoading] = useState(false);
 
     // Modal State
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [editingUser, setEditingUser] = useState<BackendUser | null>(null);
 
     // Form State
     const [formData, setFormData] = useState({
@@ -57,25 +79,25 @@ export default function UsersPage() {
         setSearchTerm(e.target.value);
     };
 
-    const filteredUsers = users.filter(user =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredUsers = users.filter(u =>
+        u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.email.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const stats = {
         total: users.length,
-        faculty: users.filter(u => u.role === "FACULTY").length,
-        students: users.filter(u => u.role === "STUDENT").length,
-        admins: users.filter(u => u.role === "ADMIN").length,
+        faculty: users.filter(u => getRoleFromUser(u) === "FACULTY").length,
+        students: users.filter(u => getRoleFromUser(u) === "STUDENT").length,
+        admins: users.filter(u => getRoleFromUser(u) === "ADMIN").length,
     };
 
-    const handleOpenModal = (user?: User) => {
+    const handleOpenModal = (user?: BackendUser) => {
         if (user) {
-            setEditingUser(user);
+            setEditingUser(user as any);
             setFormData({
                 name: user.name,
                 email: user.email,
-                role: user.role,
+                role: getRoleFromUser(user),
                 password: "", // Don't populate password
             });
         } else {
@@ -100,7 +122,7 @@ export default function UsersPage() {
         setIsDataLoading(true);
         try {
             if (editingUser) {
-                await updateUser(editingUser.user_id, formData);
+                await updateUser(getUserId(editingUser), formData);
             } else {
                 await createUser(formData);
             }
@@ -196,7 +218,7 @@ export default function UsersPage() {
                                         </tr>
                                     ) : (
                                         filteredUsers.map((user) => (
-                                            <tr key={user.user_id} className="hover:bg-slate-50/50 transition-colors group">
+                                            <tr key={getUserId(user)} className="hover:bg-slate-50/50 transition-colors group">
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-xs uppercase">
@@ -207,7 +229,7 @@ export default function UsersPage() {
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-slate-600">{user.email}</td>
                                                 <td className="px-6 py-4">
-                                                    <RoleBadge role={user.role} />
+                                                    <RoleBadge role={getRoleFromUser(user)} />
                                                 </td>
                                                 <td className="px-6 py-4 text-right">
                                                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -219,7 +241,7 @@ export default function UsersPage() {
                                                             <Edit2 size={16} />
                                                         </button>
                                                         <button
-                                                            onClick={() => handleDelete(user.user_id)}
+                                                        onClick={() => handleDelete(getUserId(user))}
                                                             className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                                             title="Delete User"
                                                         >

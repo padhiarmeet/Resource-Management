@@ -4,11 +4,11 @@ import { useRouter } from "next/navigation";
 
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Lock, ArrowRight, User, GraduationCap, Wrench } from "lucide-react";
+import { Mail, Lock, ArrowRight, User, GraduationCap, Wrench, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useState } from "react";
-import { registerUser } from "@/lib/api";
+import { registerUser, loginUser } from "@/lib/api";
 
 export default function SignupPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -62,18 +62,33 @@ export default function SignupPage() {
 
         try {
             const fullName = `${firstName} ${lastName}`.trim();
-            const user = await registerUser(fullName, email, password, selectedRole);
+            await registerUser(fullName, email, password, selectedRole);
 
-            // Store user info in localStorage
+            // Automatically log them in to get the JWT tokens and set cookies
+            const loginData = await loginUser(email, password);
+            const user = loginData.user;
+
+            // Extract role (handling the new roles array from backend)
+            let primaryRole = "STUDENT";
+            if (user.roles && user.roles.length > 0) {
+                primaryRole = user.roles[0].roleName;
+            } else if (user.role) {
+                primaryRole = user.role; // Fallback just in case
+            }
+
+            // Store the JWT accessToken (critical to prevent 401s on dashboard!)
+            localStorage.setItem("accessToken", loginData.accessToken);
+
+            // Store user info and token in localStorage
             localStorage.setItem("user", JSON.stringify({
-                userId: user.userId,
+                userId: user.userId, // use exact match for backend case
                 name: user.name,
                 email: user.email,
-                role: user.role,
+                role: primaryRole,
             }));
 
             // Redirect based on role
-            const role = user.role?.toUpperCase();
+            const role = primaryRole.toUpperCase();
             if (role === "STUDENT") router.push("/dashboard/student");
             else if (role === "FACULTY") router.push("/dashboard/faculty");
             else if (role === "MAINTENANCE") router.push("/dashboard/maintenance");
@@ -188,7 +203,7 @@ export default function SignupPage() {
                                 <p className="text-[10px] text-red-500 ml-1 mt-1 font-medium">{emailError}</p>
                             ) : (
                                 <p className="text-[10px] text-slate-400 ml-1 mt-1">
-                                    Use institutional email (@student.com, @faculty.com, @maintenance.com)
+                                    Use institutional email (@student.com, @faculty.com, @maintenance.com, @admin.com)
                                 </p>
                             )}
                         </div>
@@ -198,11 +213,12 @@ export default function SignupPage() {
                                 <label className="text-[11px] font-semibold text-slate-700 ml-1">Detected Role</label>
                                 {selectedRole && <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">{selectedRole}</span>}
                             </div>
-                            <div className="grid grid-cols-3 gap-2 pointer-events-none select-none grayscale-[0.2]">
+                            <div className="grid grid-cols-4 gap-2 pointer-events-none select-none grayscale-[0.2]">
                                 {[
                                     { value: "STUDENT", label: "Student", icon: <GraduationCap className="w-4 h-4" /> },
                                     { value: "FACULTY", label: "Faculty", icon: <User className="w-4 h-4" /> },
                                     { value: "MAINTENANCE", label: "Maintenance", icon: <Wrench className="w-4 h-4" /> },
+                                    { value: "ADMIN", label: "Admin", icon: <ShieldCheck className="w-4 h-4" /> },
                                 ].map((role) => (
                                     <div
                                         key={role.value}

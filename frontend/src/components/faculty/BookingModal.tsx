@@ -113,7 +113,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, slo
             const stored = localStorage.getItem("user");
             if (stored) {
                 const user = JSON.parse(stored);
-                currentUserId = user.userId;
+                // Try both user_id (frontend/backend snake_case) and userId (camelCase)
+                currentUserId = user.user_id || user.userId || 1;
             }
         } catch (e) {
             console.error("Failed to parse user from localStorage", e);

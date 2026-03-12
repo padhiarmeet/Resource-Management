@@ -59,13 +59,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         setThemeState(newTheme);
     };
 
-    if (!mounted) {
-        return <>{children}</>;
-    }
-
+    // Instead of completely skipping the context on SSR, we provide a default context 
+    // but avoid running browser-specific DOM updates until mounted.
     return (
-        <ThemeContext.Provider value={{ theme, setTheme }}>
-            {children}
+        <ThemeContext.Provider value={{ theme, setTheme: setThemeState }}>
+            <div style={{ visibility: mounted ? 'visible' : 'hidden' }}>
+                {children}
+            </div>
         </ThemeContext.Provider>
     );
 }

@@ -83,18 +83,30 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const user = await loginUser(email, password);
+            const data = await loginUser(email, password);
+            const user = data.user; // Extract the nested user object from TokenResponce
 
-            // Store user info in localStorage
+            // Extract role (handling the new roles array from backend)
+            let primaryRole = "STUDENT";
+            if (user.roles && user.roles.length > 0) {
+                primaryRole = user.roles[0].roleName;
+            } else if (user.role) {
+                primaryRole = user.role; // Fallback just in case
+            }
+
+            // Store the JWT accessToken (critical to prevent 401s on dashboard!)
+            localStorage.setItem("accessToken", data.accessToken);
+
+            // Store user info and token in localStorage
             localStorage.setItem("user", JSON.stringify({
                 userId: user.userId,
                 name: user.name,
                 email: user.email,
-                role: user.role,
+                role: primaryRole,
             }));
 
-            // Redirect based on role from backend response
-            const role = user.role?.toUpperCase();
+            // Redirect based on role
+            const role = primaryRole.toUpperCase();
             if (role === "STUDENT") router.push("/dashboard/student");
             else if (role === "FACULTY") router.push("/dashboard/faculty");
             else if (role === "MAINTENANCE") router.push("/dashboard/maintenance");

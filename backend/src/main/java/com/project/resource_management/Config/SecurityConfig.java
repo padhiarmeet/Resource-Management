@@ -23,10 +23,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.project.resource_management.Security.JwtAuthenticationFilter;
 
 import tools.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Value("${app.cors.allowed-origins:http://localhost:3000}")
+    private String allowedOriginsRaw;
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -68,7 +72,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        // Supports comma-separated list: "http://localhost:3000,https://your-app.vercel.app"
+        List<String> origins = List.of(allowedOriginsRaw.split(","));
+        configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

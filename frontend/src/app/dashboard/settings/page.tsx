@@ -5,14 +5,22 @@ import { useRouter } from 'next/navigation';
 import { Sidebar } from '@/components/dashboard/Sidebar';
 import { LogOut, Monitor, Moon, Sun, Globe, Bell, Shield, Key } from 'lucide-react';
 import { useTheme } from '@/components/ThemeProvider';
+import { authLogout } from '@/lib/api';
 
 export default function SettingsPage() {
     const router = useRouter();
     const { theme, setTheme } = useTheme();
 
-    const handleSignOut = () => {
-        localStorage.removeItem("user");
-        router.push("/login");
+    const handleSignOut = async () => {
+        try {
+            await authLogout();
+        } catch (err) {
+            console.error("Logout error", err);
+        } finally {
+            localStorage.removeItem("user");
+            localStorage.removeItem("accessToken");
+            router.push("/login");
+        }
     };
 
     return (

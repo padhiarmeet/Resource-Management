@@ -2,7 +2,6 @@ package com.project.resource_management.Security;
 
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties.Http;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
