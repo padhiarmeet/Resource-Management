@@ -18,14 +18,27 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
+        // Uses patterns (supports wildcards) - required when allowCredentials is true
+        // setAllowedOriginPatterns works with credentials, unlike setAllowedOrigins("*")
         config.setAllowedOriginPatterns(List.of(
                 "http://localhost:3000",
                 "http://localhost:3001",
-                "https://*.vercel.app"
+                "https://*.vercel.app",
+                "https://resource-management-g3gd.vercel.app",
+                "https://resource-management-g3gd-git-main-padhiarmeets-projects.vercel.app"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of(
+                "Authorization",
+                "Content-Type",
+                "Accept",
+                "Origin",
+                "X-Requested-With",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers"
+        ));
+        config.setExposedHeaders(List.of("Authorization", "Set-Cookie"));
         config.setAllowCredentials(true);
         config.setMaxAge(3600L);
 
