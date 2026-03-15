@@ -52,7 +52,7 @@ interface Booking {
 }
 
 /* ─── Helpers ───────────────────────────────────────────────── */
-const API = "http://localhost:8080";
+const API = "https://resource-management-backend.onrender.com";
 
 function formatDate(dt: string) {
     if (!dt) return "—";

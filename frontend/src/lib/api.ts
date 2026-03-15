@@ -1,4 +1,4 @@
-export const API_BASE_URL = "http://localhost:8080/api";
+export const API_BASE_URL = "https://resource-management-backend.onrender.com/api";
 
 async function apiFetch(endpoint: string, options: RequestInit = {}) {
     // 1. Prepare options and headers
