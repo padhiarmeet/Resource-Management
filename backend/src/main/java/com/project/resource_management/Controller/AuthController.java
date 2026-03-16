@@ -42,7 +42,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 
 @RestController
-@CrossOrigin
+@CrossOrigin("https://resource-management-backend.onrender.com")
 @AllArgsConstructor
 @RequestMapping("api/auth")
 public class AuthController {
