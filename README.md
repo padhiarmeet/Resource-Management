@@ -159,9 +159,3 @@ docker run -p 8080:8080 resource-management-backend
 | **Faculty** | Book resources, view own bookings |
 | **Student** | Book resources/shelves, view own bookings |
 | **Maintenance** | View & update maintenance tasks |
-
----
-
-## 📄 License
-
-This project is for educational/institutional use.

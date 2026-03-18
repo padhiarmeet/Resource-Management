@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { fetchBookings, fetchResources, fetchMaintenance, fetchCupboards } from "@/lib/api";
+import { RoleGuard } from "@/components/auth/RoleGuard";
 
 export default function Dashboard() {
     const [loading, setLoading] = useState(true);
@@ -152,7 +153,8 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex">
+        <RoleGuard allowedRoles={["ADMIN"]}>
+            <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex">
 
             {/* Sidebar (Fixed width) */}
             <Sidebar />
@@ -229,5 +231,6 @@ export default function Dashboard() {
                 </div>
             </main>
         </div>
+        </RoleGuard>
     );
 }
