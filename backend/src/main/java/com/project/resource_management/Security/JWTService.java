@@ -5,13 +5,11 @@ import java.sql.Date;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-// UUID is no longer needed for user id parsing
-import java.util.UUID; // keep for id generation but not for getUserId
+import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.project.resource_management.Model.Users;
@@ -115,9 +113,6 @@ public class JWTService {
         return "refresh".equals(claims.get("typ", String.class));
     }
 
-    // userId is stored as a numeric string in the subject.
-    // Parse it back to an int rather than a UUID so it matches
-    // the `Users.userId` field type.
     public int getUserId(String token) {
         Claims claims = parse(token).getPayload();
         String subject = claims.getSubject();

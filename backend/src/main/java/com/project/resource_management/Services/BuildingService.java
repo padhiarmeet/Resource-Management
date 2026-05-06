@@ -21,7 +21,6 @@ public class BuildingService {
 
     
     public Building getBuildingById(int id) {
-        
         return buildingsRepo.findById(id).orElse(null);
     }
 

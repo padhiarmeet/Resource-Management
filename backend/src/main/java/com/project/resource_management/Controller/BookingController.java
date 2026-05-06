@@ -66,7 +66,6 @@ public class BookingController {
         }
     }
 
-    // Mind blowing !!💥💥
     public static class BookingStatusRequest {
         public String status;
         public int approverId;
